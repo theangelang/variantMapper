@@ -2,8 +2,11 @@ Package: variantMapper
 Type: Package
 Title: What the Package Does (Title Case)
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
+Authors@R: person("Angela", "Ng", 
+                  email = "an.ng@mail.utoronto.ca", 
+                  role = c("aut", "cre"),
+                  comment = c(ORCID = "0000-0002-9200-1953"))
+Maintainer: Angela Ng <an.ng@mail.utoronto.ca>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
 License: What license is it under?
