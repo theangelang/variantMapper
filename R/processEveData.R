@@ -13,7 +13,6 @@
 #' @import vcfR dplyr tibble stringr
 processEveData <- function(filePath) {
 
-  # TODO: convert the column types to integers where appropriate
   if (!file.exists(filePath)) {
     stop("File not found.  Please provide a valid filepath for the EVE data.")
   }
