@@ -10,7 +10,7 @@
 #'
 #' @return Returns a tibble with the data from the vcf file provided.
 #'
-#' @import vcfR dplyr tibble
+#' @import vcfR dplyr tibble stringr
 processEveData <- function(filePath) {
 
   # TODO: convert the column types to integers where appropriate
@@ -44,8 +44,32 @@ processEveData <- function(filePath) {
   # convert the RevStr to type logical
   eveData$RevStr <- as.logical(as.character(eveData$RevStr))
 
+  protChange <- getProtMutInfo(eveData$ProtMut)
+
+  eveData <- dplyr::bind_cols(eveData, protChange)
+
   return(eveData)
 
+}
+
+# helper function to extract the wild type, residue position, and variant amino
+# acid from the ProtMut column
+getProtMutInfo <- function(protMut) {
+
+  aaChange <- sapply(strsplit(protMut, "_"), "[", 2) # keep everything after _
+
+  # get the wild type amino acid
+  wtAa <- substr(aaChange, 1, 1)
+
+  # get the variant amino acid
+  varAa <- stringr::str_sub(aaChange, -1) # from stringr package
+
+  resPos <- gsub("[^0-9.-]", "", aaChange) # replace all the characters with ""
+  resPos <- as.numeric(as.character(resPos))# convert to numeric
+
+  res <- dplyr::tibble(wtAa, resPos, varAa)
+
+  return(res)
 }
 
 #[END]
