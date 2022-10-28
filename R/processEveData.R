@@ -12,6 +12,8 @@
 #'
 #' @import vcfR dplyr tibble
 processEveData <- function(filePath) {
+
+  # TODO: convert the column types to integers where appropriate
   if (!file.exists(filePath)) {
     stop("File not found.  Please provide a valid filepath for the EVE data.")
   }
@@ -31,9 +33,18 @@ processEveData <- function(filePath) {
   eveScores <- vcfR::extract_info_tidy(readData)
 
   # combine 2 tibbles to 1
-  allInfo <- dplyr::bind_cols(seqInfoTibble, eveScores)
+  eveData <- dplyr::bind_cols(seqInfoTibble, eveScores)
 
-  return(allInfo)
+  # convert the CHROM and POS columns to numeric
+  i <- c(1, 2)
+  eveData[ , i] <- apply(eveData[ , i],
+                         2,
+                         function(x) as.numeric(as.character((x))))
+
+  # convert the RevStr to type logical
+  eveData$RevStr <- as.logical(as.character(eveData$RevStr))
+
+  return(eveData)
 
 }
 
