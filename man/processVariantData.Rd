@@ -14,7 +14,7 @@ about the variant and gene of interest.}
 or protein coordinates.}
 }
 \value{
-Returns a dataframe with the data from the csv file provided.
+Returns a tibble with the data from the csv file provided.
 }
 \description{
 A function that checks if the data provided is in the right format (csv), if

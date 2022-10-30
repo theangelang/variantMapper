@@ -11,7 +11,9 @@
 #' @param protein This argument specifies whether the input data is in genomic
 #' or protein coordinates.
 #'
-#' @return Returns a dataframe with the data from the csv file provided.
+#' @return Returns a tibble with the data from the csv file provided.
+#'
+#' @import tibble
 #'
 #' @importFrom utils read.csv
 
@@ -35,7 +37,8 @@ processVariantData <- function(filePath, protein = TRUE) {
   if (isTRUE(protein)) {
 
     if ("wt_aa" %in% cols & "position" %in% cols & "mt_aa" %in% cols) {
-      return (varData)
+      varDataTibble <- tibble::tibble(varData$wt_aa, varData$position, varData$mt_aa)
+      return (varDataTibble)
     } else {
       stop("File is missing columns, please provide a .csv file with columns
            'wt_aa', 'position', and 'mt_aa.")
@@ -44,7 +47,13 @@ processVariantData <- function(filePath, protein = TRUE) {
 
     if ("chrom" %in% cols & "start" %in% cols & "end" %in% cols &
         "ref_allele" %in% cols & "alt_allele" %in% cols & "var_type" %in% cols) {
-      return (varData)
+      varDataTibble <- tibble::tibble(varData$chrom,
+                              varData$start,
+                              varData$end,
+                              varData$ref_allele,
+                              varData$alt_allele,
+                              varData$var_type)
+      return (varDataTibble)
     } else {
       stop("File is missing columns, please provide a .csv file with columns
            'chrom', 'start', 'end', 'ref_allele', 'alt_allele', and
