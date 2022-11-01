@@ -35,31 +35,32 @@ processVariantData <- function(filePath, protein = TRUE) {
 
   # check if data is in protein coordinates
   if (isTRUE(protein)) {
-
     if ("wt_aa" %in% cols & "position" %in% cols & "mt_aa" %in% cols) {
       varDataTibble <- tibble::tibble(wtAa = varData$wt_aa,
                                       resPos = varData$position,
                                       varAa = varData$mt_aa)
       return (varDataTibble)
+
     } else {
       stop("File is missing columns, please provide a .csv file with columns
            'wt_aa', 'position', and 'mt_aa.")
     }
   } else {
-
     if ("chrom" %in% cols & "start" %in% cols & "end" %in% cols &
-        "ref_allele" %in% cols & "alt_allele" %in% cols & "var_type" %in% cols) {
+        "ref_allele" %in% cols & "alt_allele" %in% cols) {
       varDataTibble <- tibble::tibble(CHROM = varData$chrom,
                               start = varData$start,
                               end = varData$end,
                               REF = varData$ref_allele,
-                              ALT = varData$alt_allele,
-                              varData$var_type)
+                              ALT = varData$alt_allele)
+
       if (!identical(varDataTibble[["start"]], varDataTibble[["end"]])) {
         warning("The variant data contains variants other than single nucleotide
                 variants which can lead to unusual results.")
       }
+
       return (varDataTibble)
+
     } else {
       stop("File is missing columns, please provide a .csv file with columns
            'chrom', 'start', 'end', 'ref_allele', 'alt_allele', and
