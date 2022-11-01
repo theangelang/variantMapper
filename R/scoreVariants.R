@@ -23,6 +23,7 @@ findVariantPosition <- function(coordinates, varCoord) {
 # helper function to construct alternate codon sequence
 constructAltSeq <- function(refData, ntPos, genomicCoord, varNt) {
   # TODO: POS is column in refData, check if it is present
+  # TODO: check if REF and resPos present too
   refInfo <- dplyr::filter(refData, POS == genomicCoord) # get the matching row
   refCodon <- refInfo[1,]$REF
   resPos <- refInfo[1,]$resPos
@@ -39,7 +40,7 @@ scoreVariants <- function(eveData, variantData, protein = TRUE) {
   # eveData is the tibble
   # return a vector with the EVE score for all the proteins with EVE score
 
-  # call helper to get pairs of distinct wtAa and residue positions
+  # get pairs of distinct wtAa and residue positions
   wtAaPos <- uniqueWtAaPos(eveData)
   numResidues <- nrow(wtAaPos)
   eveScores <- vector("numeric", numResidues) # vector to return
@@ -60,6 +61,7 @@ scoreVariants <- function(eveData, variantData, protein = TRUE) {
       mut <- variantData[i,]
 
       # get a subset of all the rows in EVE data with that wtAa, resPos, varAa
+      # TODO: check if it has all those columns
       varSubset <- dplyr::filter(variants,
                                  wtAa == mut$wtAa,
                                  resPos == mut$resPos,
@@ -79,8 +81,87 @@ scoreVariants <- function(eveData, variantData, protein = TRUE) {
       }
     }
   } else {
-    # if it is in genomic coordinates
+    # it is in genomic coordinates
+
+    # unique genomic coordinates, wt seq, and residue position in EVE data
+    # TODO: check it has all those cols first
+    uniqueGenomicCoords <- dplyr::distinct(eveData, POS, REF, resPos)
+
+    # data processing checked if all variants are single nucleotide variants
+    # (SNVs), will assume data consists of just SNVs
+
+    # get the nucleotide position in the codon and corresponding start genomic
+    # coordinate for the codon
+    # TODO: check it has all those cols first
+    ntPosAndGenomicCoord <- sapply(variantData$start,
+                                   findVariantPosition,
+                                   coordinates = uniqueGenomicCoords$POS)
+
+    ntPosAndGenomicCoord <- t(ntPosAndGenomicCoord) # transpose data
+    ntPosAndGenomicCoord <- dplyr::as_tibble(ntPosAndGenomicCoord)
+
+    refCodons <- c("character", nrow(variantData))
+    altCodons <- c("character", nrow(variantData))
+    resPos <- c("numeric", nrow(variantData))
+
+    #construct the alternative allele for each variant
+    for (i in 1:nrow(variantData)) {
+      # TODO: check it has all those columns first
+      converted <- constructAltSeq(refData = uniqueGenomicCoords,
+                                   ntPos = ntPosAndGenomicCoord[i,]$ntPos,
+                                   genomicCoord = ntPosAndGenomicCoord[i,]$genomicCoord,
+                                   varNt = variantData[i,]$ALT)
+      refCodons[i] <- converted[1,]$refCodon
+      altCodons[i] <- converted[1,]$altCodon
+      resPos[i] <- converted[1,]$resPos
+    }
+
+    resPos <- as.numeric(resPos)
+
+    # combine variant data with refCodons, altCodons, resPos, and genomic
+    # coordinate of first nt in codon
+    mutatedVariantData <- variantData %>%
+      tibble::add_column(refCodons = refCodons,
+                         altCodons = altCodons,
+                         resPos = resPos,
+                         genomicCoord = ntPosAndGenomicCoord$genomicCoord,
+                         ntPos = ntPosAndGenomicCoord$ntPos)
+
+
+    # get EVE data for variants
+    # TODO: check if it has those columns first
+    variants <- dplyr::inner_join(eveData,
+                                  mutatedVariantData,
+                                  by = c("POS" = "genomicCoord",
+                                         "REF" = "refCodons",
+                                         "ALT" = "altCodons"))
+
+    # get EVE score for variants
+    for (i in 1:nrow(variantData)) {
+      mut <- mutatedVariantData[i,]
+
+      # find EVE data that matches variant
+      # TODO: check if it has all those columns first
+      varSubset <- dplyr::filter(variants,
+                                 POS == mut$genomicCoord,
+                                 resPos == mut$resPos,
+                                 REF == mut$refCodons,
+                                 ALT == mut$altCodons)
+
+      if (nrow(varSubset) == 0) {
+        # variant isn't scored
+        eveScores[mut$resPos] <- NaN
+      } else if (nrow(varSubset) == 1) {
+        eveScores[mut$resPos] <- varSubset[1,]$EVE
+      } else {
+        # assign EVE score as the average
+        # TODO: look into if all variants mutate to same aa but different codon
+        # have same EVE score
+        eveScores[mut$resPos] <- mean(varSubset$EVE)
+      }
   }
   return(eveScores)
-
+  }
 }
+
+# [END]
