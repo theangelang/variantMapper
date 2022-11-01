@@ -19,3 +19,16 @@ findVariantPosition <- function(coordinates, varCoord) {
     return(c(ntPos = NaN, genomicCoord = NaN))
   }
 }
+
+# helper function to construct alternative codon sequence
+constructAltSeq <- function(refData, ntPos, genomicCoord, varNt) {
+  refInfo <- dplyr::filter(refData, POS == genomicCoord) # get the matching row
+  refCodon <- refInfo[1,]$REF
+  resPos <- refInfo[1,]$resPos
+
+  # produce the alternative codon seq
+  altCodon <- refInfo[1,]$REF # initially assign it ref codon seq
+  stringr::str_sub(altCodon, ntPos, ntPos) <- varNt # change to alternate codon
+                                                    # seq
+  return(tibble(refCodon = refCodon, altCodon = altCodon, resPos = resPos))
+}
