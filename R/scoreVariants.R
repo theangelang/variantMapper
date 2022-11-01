@@ -1,6 +1,7 @@
 # helper function to get unique wtAa and the resPos
 uniqueWtAaPos <- function(eveData) {
   # Note- wtAa and resPos are columns in eveData
+  # TODO: Include check to make sure they are in the eveData
   wtAaPos <- dplyr::distinct(eveData, wtAa, resPos)
   return(wtAaPos)
 }
