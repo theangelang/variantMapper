@@ -35,6 +35,33 @@ constructAltSeq <- function(refData, ntPos, genomicCoord, varNt) {
   return(tibble(refCodon = refCodon, altCodon = altCodon, resPos = resPos))
 }
 
+#' Scores the variant of interest with EVE scores
+#'
+#' A function that takes in EVE and variant data then will score the variant
+#' with an EVE score.  If the data is supplied in protein form it will take the
+#' average of the EVE scores for that amino acid mutation since EVE data is
+#' available down to the single nucleotide variation level.
+#'
+#' @param eveData A tibble containing the EVE data that has already been
+#' processed by the processEveData function.
+#'
+#' @param variantData A tibble containing the variant data that has already
+#' been processed by the processVariantData function.  Assumption is that there
+#' will only be one variant at each residue/genomic position and the wildtype
+#' and variant amino acid are distinct from one another.  For protein data it
+#' will be missense variants only and genomic data single nucleotide variants only.
+#' Won't try to score mutations that result in wildtype and variant amino acid as the same
+#' Assume variants are independent of each other, and only 1 variant at each genomic/residue position.
+#'
+#' @param protein Specifies whether the variant data is in protein or genomic
+#' form.  By default it is set to TRUE meaning the default is protein form.
+#'
+#' @return Returns a vector containing the EVE scores for each residue position
+#' that has a score calculated by EVE.  If there are NaNs it means the
+#' variant provided doesn't have an EVE score.
+#'
+#' @import dplyr tibble
+
 scoreVariants <- function(eveData, variantData, protein = TRUE) {
 
   # eveData is the tibble
