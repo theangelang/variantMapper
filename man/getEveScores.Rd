@@ -22,9 +22,10 @@ acid being the same.  Assume variants are independent of each other.}
 form.  By default it is set to TRUE meaning the default is protein form.}
 }
 \value{
-Returns a vector containing the EVE scores for each residue position
-that has a score calculated by EVE.  If there are NaNs it means the
-variant provided doesn't have an EVE score.
+Returns a named vector containing the EVE scores for each residue
+position that has a score calculated by EVE.  If there are NaNs it means the
+variant provided doesn't have an EVE score.  The names represent the residue
+position.
 }
 \description{
 A function that takes in EVE and variant data then will get the EVE score for
