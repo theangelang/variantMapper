@@ -101,14 +101,14 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
       # score the mutation
       if (nrow(varSubset) == 0) {
         # variant isn't scored
-        eveScores[pos] <- NaN
+        eveScores[[pos]] <- NaN
       } else if (nrow(varSubset) == 1) {
-        eveScores[pos] <- varSubset[1, eveCol]
+        eveScores[[pos]] <- varSubset[1, eveCol]
       } else {
         # assign EVE score as the average
         # TODO: look into if all variants mutate to same aa but different codon
         # have same EVE score
-        eveScores[pos] <- mean(varSubset$EVE)
+        eveScores[[pos]] <- mean(varSubset$EVE)
       }
     }
     return(eveScores)
@@ -183,14 +183,14 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
 
       if (nrow(varSubset) == 0) {
         # variant isn't scored
-        eveScores[pos] <- NaN
+        eveScores[[pos]] <- NaN
       } else if (nrow(varSubset) == 1) {
-        eveScores[pos] <- varSubset[1,]$EVE
+        eveScores[[pos]] <- varSubset[1,]$EVE
       } else {
         # assign EVE score as the average
         # TODO: look into if all variants mutate to same aa but different codon
         # have same EVE score
-        eveScores[pos] <- mean(varSubset$EVE)
+        eveScores[[pos]] <- mean(varSubset$EVE)
       }
     }
     return(eveScores)
