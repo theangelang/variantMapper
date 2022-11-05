@@ -57,11 +57,13 @@ constructAltSeq <- function(refData, ntPos, genomicCoord, varNt) {
 #' @param protein Specifies whether the variant data is in protein or genomic
 #' form.  By default it is set to TRUE meaning the default is protein form.
 #'
-#' @return Returns a named vector containing the EVE scores for each residue
-#' position that has a score calculated by EVE.  If there are NaNs it means the
-#' variant provided doesn't have an EVE score.  The names represent the residue
+#' @return Returns a tibble containing the EVE scores for each residue
+#' position that has a score calculated by EVE, residue position, wildtype amino
+#' acid, and mutated amino acid.  If there are NaNs it means the variant
+#' provided doesn't have an EVE score.  The names represent the residue
 #' position.
 #'
+#' @importFrom stats setNames
 #' @import dplyr tibble
 
 getEveScores <- function(eveData, variantData, protein = TRUE) {
@@ -73,7 +75,11 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
   wtAaPos <- uniqueWtAaPos(eveData)
   numResidues <- nrow(wtAaPos)
   eveScores <- vector("numeric", numResidues) # vector to return
-  eveScores <- setNames(eveScores, wtAaPos$resPos)
+  eveScores <- stats::setNames(eveScores, wtAaPos$resPos)
+  wtAas <- wtAaPos$wtAa
+  wtAas <- stats::setNames(wtAas, wtAaPos$resPos)
+  varAas <- wtAas
+  varAas <- stats::setNames(varAas, wtAaPos$resPos)
 
   # those with no mutation i.e. wildtype have EVE score 0 (benign), and those
   # variants who aren't scored are assigned NaN
@@ -85,6 +91,7 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
     variants <- dplyr::inner_join(eveData, variantData) # variants with EVE data
 
     eveCol <- which(colnames(variants) == "EVE") # get column with EVE score
+    varAaCol <- which(colnames(variants) == "varAa")
 
     # loop through the variant data
     for (i in 1:nrow(variantData)) {
@@ -102,16 +109,23 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
       if (nrow(varSubset) == 0) {
         # variant isn't scored
         eveScores[[pos]] <- NaN
+        varAas[[pos]] <- mut$varAa# udpate the varAa
       } else if (nrow(varSubset) == 1) {
         eveScores[[pos]] <- varSubset[1, eveCol]
+        varAas[[pos]] <- varSubset[[1, varAaCol]]# udpate the varAa
       } else {
         # assign EVE score as the average
         # TODO: look into if all variants mutate to same aa but different codon
         # have same EVE score
         eveScores[[pos]] <- mean(varSubset$EVE)
+        varAas[[pos]] <- varSubset[[1, varAaCol]]# udpate the varAa
       }
     }
-    return(eveScores)
+    result <- tibble::tibble(eveScores,
+                             resPos = wtAaPos$resPos,
+                             wtAa = unname(wtAas),
+                             varAa = unname(varAas))
+    return(result)
   } else {
     # it is in genomic coordinates
 
