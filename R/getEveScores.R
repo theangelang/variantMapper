@@ -57,9 +57,10 @@ constructAltSeq <- function(refData, ntPos, genomicCoord, varNt) {
 #' @param protein Specifies whether the variant data is in protein or genomic
 #' form.  By default it is set to TRUE meaning the default is protein form.
 #'
-#' @return Returns a vector containing the EVE scores for each residue position
-#' that has a score calculated by EVE.  If there are NaNs it means the
-#' variant provided doesn't have an EVE score.
+#' @return Returns a named vector containing the EVE scores for each residue
+#' position that has a score calculated by EVE.  If there are NaNs it means the
+#' variant provided doesn't have an EVE score.  The names represent the residue
+#' position.
 #'
 #' @import dplyr tibble
 
@@ -72,6 +73,7 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
   wtAaPos <- uniqueWtAaPos(eveData)
   numResidues <- nrow(wtAaPos)
   eveScores <- vector("numeric", numResidues) # vector to return
+  eveScores <- setNames(eveScores, wtAaPos$resPos)
 
   # those with no mutation i.e. wildtype have EVE score 0 (benign), and those
   # variants who aren't scored are assigned NaN
@@ -87,6 +89,7 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
     # loop through the variant data
     for (i in 1:nrow(variantData)) {
       mut <- variantData[i,]
+      pos <- as.character(mut$resPos) # get position where to put the score
 
       # get a subset of all the rows in EVE data with that wtAa, resPos, varAa
       # TODO: check if it has all those columns
@@ -98,14 +101,14 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
       # score the mutation
       if (nrow(varSubset) == 0) {
         # variant isn't scored
-        eveScores[mut$resPos] <- NaN
+        eveScores[pos] <- NaN
       } else if (nrow(varSubset) == 1) {
-        eveScores[mut$resPos] <- varSubset[1, eveCol]
+        eveScores[pos] <- varSubset[1, eveCol]
       } else {
         # assign EVE score as the average
         # TODO: look into if all variants mutate to same aa but different codon
         # have same EVE score
-        eveScores[mut$resPos] <- mean(varSubset$EVE)
+        eveScores[pos] <- mean(varSubset$EVE)
       }
     }
     return(eveScores)
@@ -168,6 +171,7 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
     # get EVE score for variants
     for (i in 1:nrow(variantData)) {
       mut <- mutatedVariantData[i,]
+      pos <- as.character(mut$resPos) # get position where to put the score
 
       # find EVE data that matches variant
       # TODO: check if it has all those columns first
@@ -179,14 +183,14 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
 
       if (nrow(varSubset) == 0) {
         # variant isn't scored
-        eveScores[mut$resPos] <- NaN
+        eveScores[pos] <- NaN
       } else if (nrow(varSubset) == 1) {
-        eveScores[mut$resPos] <- varSubset[1,]$EVE
+        eveScores[pos] <- varSubset[1,]$EVE
       } else {
         # assign EVE score as the average
         # TODO: look into if all variants mutate to same aa but different codon
         # have same EVE score
-        eveScores[mut$resPos] <- mean(varSubset$EVE)
+        eveScores[pos] <- mean(varSubset$EVE)
       }
     }
     return(eveScores)
