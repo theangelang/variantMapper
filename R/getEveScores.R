@@ -35,12 +35,13 @@ constructAltSeq <- function(refData, ntPos, genomicCoord, varNt) {
   return(tibble(refCodon = refCodon, altCodon = altCodon, resPos = resPos))
 }
 
-#' Scores the variant of interest with EVE scores
+#' Gets the EVE score for the amino acids in variant of interest.
 #'
-#' A function that takes in EVE and variant data then will score the variant
-#' with an EVE score.  If the data is supplied in protein form it will take the
-#' average of the EVE scores for that amino acid mutation since EVE data is
-#' available down to the single nucleotide variation level.
+#' A function that takes in EVE and variant data then will get the EVE score for
+#' each amino acid in the variant of interest.  If the data is supplied in
+#' protein form it will take the average of the EVE scores for that amino acid
+#' mutation since EVE data is available down to the single nucleotide variation
+#' level and multiple codons code for the same amino acid.
 #'
 #' @param eveData A tibble containing the EVE data that has already been
 #' processed by the processEveData function.
@@ -49,9 +50,9 @@ constructAltSeq <- function(refData, ntPos, genomicCoord, varNt) {
 #' been processed by the processVariantData function.  Assumption is that there
 #' will only be one variant at each residue/genomic position and the wildtype
 #' and variant amino acid are distinct from one another.  For protein data it
-#' will be missense variants only and genomic data single nucleotide variants only.
-#' Won't try to score mutations that result in wildtype and variant amino acid as the same
-#' Assume variants are independent of each other, and only 1 variant at each genomic/residue position.
+#' will be missense variants only and genomic data single nucleotide variants
+#' only.  Won't try to score mutations that result in wildtype and variant amino
+#' acid being the same.  Assume variants are independent of each other.
 #'
 #' @param protein Specifies whether the variant data is in protein or genomic
 #' form.  By default it is set to TRUE meaning the default is protein form.
@@ -62,7 +63,7 @@ constructAltSeq <- function(refData, ntPos, genomicCoord, varNt) {
 #'
 #' @import dplyr tibble
 
-scoreVariants <- function(eveData, variantData, protein = TRUE) {
+getEveScores <- function(eveData, variantData, protein = TRUE) {
 
   # eveData is the tibble
   # return a vector with the EVE score for all the proteins with EVE score
