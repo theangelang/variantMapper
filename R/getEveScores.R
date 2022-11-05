@@ -108,6 +108,7 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
         eveScores[mut$resPos] <- mean(varSubset$EVE)
       }
     }
+    return(eveScores)
   } else {
     # it is in genomic coordinates
 
@@ -187,8 +188,8 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
         # have same EVE score
         eveScores[mut$resPos] <- mean(varSubset$EVE)
       }
-  }
-  return(eveScores)
+    }
+    return(eveScores)
   }
 }
 
