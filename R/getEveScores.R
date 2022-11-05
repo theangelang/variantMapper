@@ -198,16 +198,22 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
       if (nrow(varSubset) == 0) {
         # variant isn't scored
         eveScores[[pos]] <- NaN
+        varAas[[pos]] <- mut$varAa# udpate the varAa
       } else if (nrow(varSubset) == 1) {
         eveScores[[pos]] <- varSubset[1,]$EVE
+        varAas[[pos]] <- varSubset[1,]$varAa # udpate the varAa
       } else {
         # assign EVE score as the average
         # TODO: look into if all variants mutate to same aa but different codon
         # have same EVE score
         eveScores[[pos]] <- mean(varSubset$EVE)
+        varAas[[pos]] <- varSubset[1,]$varAa # udpate the varAa
       }
     }
-    return(eveScores)
+    return(tibble(eveScores,
+                  resPos = wtAaPos$resPos,
+                  wtAa = unname(wtAas),
+                  varAa = unname(varAas)))
   }
 }
 
