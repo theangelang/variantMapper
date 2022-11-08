@@ -19,3 +19,13 @@ Returns a tibble with the data from the vcf file provided.
 A function that checks if the data provided is in the right format (vcf) and
 processes it for future use.
 }
+\examples{
+# Example:
+# Get the EVE data in the correct format by accessing raw EVE data provided
+# for a gene
+
+EvePath <- system.file("extdata", "NRX1B_HUMAN.vcf", package = "variantMapper")
+EveData <- processEveData(EvePath)
+EveData
+
+}

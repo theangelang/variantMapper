@@ -10,6 +10,17 @@
 #'
 #' @return Returns a tibble with the data from the vcf file provided.
 #'
+#' @export
+#'
+#' @examples
+#' # Example:
+#' # Get the EVE data in the correct format by accessing raw EVE data provided
+#' # for a gene
+#'
+#' EvePath <- system.file("extdata", "NRX1B_HUMAN.vcf", package = "variantMapper")
+#' EveData <- processEveData(EvePath)
+#' EveData
+#'
 #' @import vcfR dplyr tibble stringr
 processEveData <- function(filePath) {
 
