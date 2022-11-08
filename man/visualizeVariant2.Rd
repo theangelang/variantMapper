@@ -2,10 +2,26 @@
 % Please edit documentation in R/visualizeVariant.R
 \name{visualizeVariant2}
 \alias{visualizeVariant2}
-\title{Function to visualize EVE scores of two variants at once}
+\title{Visualize EVE scores of two variants for one gene.}
 \usage{
 visualizeVariant2(eveInfo1, eveInfo2)
 }
+\arguments{
+\item{eveInfo1}{Tibble for the first variant with EVE scores for each residue
+position that has a score calculated by EVE, residue position, wildtype amino
+acid, and mutated amino acid.  If there are NaNs it means the variant
+provided doesn't have an EVE score.}
+
+\item{eveInfo2}{Tibble for the second variant with EVE scores for each
+residue position that has a score calculated by EVE, residue position,
+wildtype amino acid, and mutated amino acid.  If there are NaNs it means the
+variant provided doesn't have an EVE score.}
+}
+\value{
+A lollipop graph showing the EVE score at each residue position for
+both variants.
+}
 \description{
-Function to visualize EVE scores of two variants at once
+A function that visualizes EVE scores for two variants of the same gene
+simultaneously.
 }

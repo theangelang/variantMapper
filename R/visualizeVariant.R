@@ -1,5 +1,15 @@
 #' Visualizes EVE score for a protein variant.
 #'
+#' A function that visualizes EVE scores of a variant at residue positions where
+#' EVE scores are possible.
+#'
+#' @param eveInfo Tibble with EVE scores for each residue
+#' position that has a score calculated by EVE, residue position, wildtype amino
+#' acid, and mutated amino acid.  If there are NaNs it means the variant
+#' provided doesn't have an EVE score.
+#'
+#' @return A lollipop graph showing the EVE score at each residue position.
+#'
 #' @import ggplot2
 
 visualizeVariant <- function(eveInfo) {
@@ -23,7 +33,23 @@ visualizeVariant <- function(eveInfo) {
   return(p)
 }
 
-#' Function to visualize EVE scores of two variants at once
+#' Visualize EVE scores of two variants for one gene.
+#'
+#' A function that visualizes EVE scores for two variants of the same gene
+#' simultaneously.
+#'
+#' @param eveInfo1 Tibble for the first variant with EVE scores for each residue
+#' position that has a score calculated by EVE, residue position, wildtype amino
+#' acid, and mutated amino acid.  If there are NaNs it means the variant
+#' provided doesn't have an EVE score.
+#'
+#' @param eveInfo2 Tibble for the second variant with EVE scores for each
+#' residue position that has a score calculated by EVE, residue position,
+#' wildtype amino acid, and mutated amino acid.  If there are NaNs it means the
+#' variant provided doesn't have an EVE score.
+#'
+#' @return A lollipop graph showing the EVE score at each residue position for
+#' both variants.
 #'
 #' @import ggplot2
 

@@ -6,6 +6,16 @@
 \usage{
 visualizeVariant(eveInfo)
 }
+\arguments{
+\item{eveInfo}{Tibble with EVE scores for each residue
+position that has a score calculated by EVE, residue position, wildtype amino
+acid, and mutated amino acid.  If there are NaNs it means the variant
+provided doesn't have an EVE score.}
+}
+\value{
+A lollipop graph showing the EVE score at each residue position.
+}
 \description{
-Visualizes EVE score for a protein variant.
+A function that visualizes EVE scores of a variant at residue positions where
+EVE scores are possible.
 }
