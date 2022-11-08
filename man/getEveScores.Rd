@@ -25,8 +25,7 @@ form.  By default it is set to TRUE meaning the default is protein form.}
 Returns a tibble containing the EVE scores for each residue
 position that has a score calculated by EVE, residue position, wildtype amino
 acid, and mutated amino acid.  If there are NaNs it means the variant
-provided doesn't have an EVE score.  The names represent the residue
-position.
+provided doesn't have an EVE score.
 }
 \description{
 A function that takes in EVE and variant data then will get the EVE score for

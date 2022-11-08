@@ -60,8 +60,7 @@ constructAltSeq <- function(refData, ntPos, genomicCoord, varNt) {
 #' @return Returns a tibble containing the EVE scores for each residue
 #' position that has a score calculated by EVE, residue position, wildtype amino
 #' acid, and mutated amino acid.  If there are NaNs it means the variant
-#' provided doesn't have an EVE score.  The names represent the residue
-#' position.
+#' provided doesn't have an EVE score.
 #'
 #' @importFrom stats setNames
 #' @import dplyr tibble
