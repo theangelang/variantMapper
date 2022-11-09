@@ -1,4 +1,13 @@
-# helper function to get unique wtAa and the resPos
+#' Helper function to get a list of unique wild type amino acids at each residue
+#' position.
+#'
+#' @param eveData A tibble with a column "wtAa" and "resPos" with 1 letter amino
+#' acid code and residue position respectively.
+#'
+#' @return A tibble with wild type amino acid and residue position.
+#'
+#' @noRd
+
 uniqueWtAaPos <- function(eveData) {
   # Note- wtAa and resPos are columns in eveData
   # TODO: Include check to make sure they are in the eveData
@@ -6,7 +15,21 @@ uniqueWtAaPos <- function(eveData) {
   return(wtAaPos)
 }
 
-# helper function to find out which nt is mutated (1, 2, or 3)
+#' Helper function to find out which nucleotide position of a codon is mutated.
+#'
+#' @param coordinates A vector of doubles indicating the start position in the
+#' genome for each residue.
+#'
+#' @param varCoord An integer representing where in the genome the mutation
+#' occurred.
+#'
+#' @return A vector of length 2 with the nucleotide position (1, 2, or 3) in the
+#'  first position and the genomic coordinate of the first nucleotide in the
+#'  corresponding codon.  If the varCoord is not in the coordinates it will
+#'  return a vector of length 2 with values of NaN for both values.
+#'
+#' @noRd
+
 findVariantPosition <- function(coordinates, varCoord) {
   if (varCoord %in% coordinates) {
     return(c(ntPos = 1, genomicCoord = varCoord))
@@ -20,7 +43,24 @@ findVariantPosition <- function(coordinates, varCoord) {
   }
 }
 
-# helper function to construct alternate codon sequence
+#' Helper function to construct the alternate codon sequence corresponding to
+#' the single nucleotide variant (SNV).
+#'
+#' @param refData A tibble with three columns POS for the genomic position, REF
+#' for the wild type codon, and resPos for the residue position.
+#'
+#' @param ntPos Which position in the codon the SNV occurred the first, second or
+#' third.
+#'
+#' @param genomicCoord The genomic coordinate of the first nucleotide in the
+#' corresponding codon for the SNV.
+#'
+#' @param varNt The nucelotide variant.
+#'
+#' @return A tibble with reference codon, alternate codon, and residue position.
+#'
+#' @noRd
+
 constructAltSeq <- function(refData, ntPos, genomicCoord, varNt) {
   # TODO: POS is column in refData, check if it is present
   # TODO: check if REF and resPos present too
@@ -61,6 +101,31 @@ constructAltSeq <- function(refData, ntPos, genomicCoord, varNt) {
 #' position that has a score calculated by EVE, residue position, wildtype amino
 #' acid, and mutated amino acid.  If there are NaNs it means the variant
 #' provided doesn't have an EVE score.
+#'
+#' @export
+#'
+#' @examples
+#' # Example:
+#' # First process the EVE data and variant data.
+#' EvePath <- system.file("extdata", "NRX1B_HUMAN.vcf", package = "variantMapper")
+#' EveData <- processEveData(EvePath)
+#' EveData
+#'
+#' # If the data is in protein form.
+#' varDataProtPath <- system.file("extdata", "variant_data_protein.csv", package = "variantMapper")
+#' varDataProt <- processVariantData(varDataProtPath, protein = TRUE)
+#' varDataProt
+#'
+#' eveScores <- getEveScores(EveData, varDataProt, protein = TRUE)
+#' eveScores
+#'
+#' # If the data is in genomic form.
+#' varDataGenPath <- system.file("extdata", "variant_data_genomic.csv", package = "variantMapper")
+#' varDataGen <- processVariantData(varDataGenPath, protein = FALSE)
+#' varDataGen
+#'
+#' eveScores <- getEveScores(EveData, varDataGen, protein = FALSE)
+#' eveScores
 #'
 #' @importFrom stats setNames
 #' @import dplyr tibble

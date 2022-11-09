@@ -24,6 +24,7 @@
 #' }
 #'
 #' @import vcfR dplyr tibble stringr
+
 processEveData <- function(filePath) {
 
   if (!file.exists(filePath)) {
@@ -64,8 +65,18 @@ processEveData <- function(filePath) {
 
 }
 
-# helper function to extract the wild type, residue position, and variant amino
-# acid from the ProtMut column
+#' Helper function to extract wild type, residue position, and variant amino acid
+#' from ProtMut column in the EVE dataset.
+#'
+#' @param protMut Character vector of form
+#' UniprotId_(WildTypeAminoAcid)(ResiduePosition)(VariantAminoAcid) without the
+#' brackets.
+#'
+#' @return Returns a tibble containing the wild type amino acid, residue
+#' position, and variant amino acid.
+#'
+#' @noRd
+
 getProtMutInfo <- function(protMut) {
 
   aaChange <- sapply(strsplit(protMut, "_"), "[", 2) # keep everything after _
