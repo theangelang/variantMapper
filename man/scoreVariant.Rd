@@ -10,7 +10,8 @@ scoreVariant(
 )
 }
 \arguments{
-\item{eveScores}{EVE scores for each residue position that has a possible EVE
+\item{eveScores}{A vector containing EVE scores for each residue position
+that has a possible EVE
 score.}
 
 \item{posWeights}{The weights to give each residue position when calculating
@@ -24,4 +25,40 @@ Returns a double with the weighted EVE score for the protein variant.
 }
 \description{
 Scores a variant of a protein based on weighted average.
+}
+\examples{
+# Examples:
+# First process the EVE data and variant data.
+EvePath <- system.file("extdata", "NRX1B_HUMAN.vcf", package = "variantMapper")
+EveData <- processEveData(EvePath)
+EveData
+
+# If the data is in protein form.
+varDataProtPath <- system.file("extdata", "variant_data_protein.csv", package = "variantMapper")
+varDataProt <- processVariantData(varDataProtPath, protein = TRUE)
+varDataProt
+
+eveScoresProt <- getEveScores(EveData, varDataProt, protein = TRUE)
+eveScoresProt
+
+# Get the weighted average EVE score to see overall how pathogenic this variant is
+avgEveScore <- scoreVariant(eveScoresProt$eveScores) #using the default of uniform weights
+avgEveScore
+
+# If the data is in genomic form.
+varDataGenPath <- system.file("extdata", "variant_data_genomic.csv", package = "variantMapper")
+varDataGen <- processVariantData(varDataGenPath, protein = FALSE)
+varDataGen
+
+eveScoresGen <- getEveScores(EveData, varDataGen, protein = FALSE)
+eveScoresGen
+
+# Get the weighted average EVE score to see overall how pathogenic this variant is
+# Assign more weight to the first few residue positions
+weightsUnequal <- rep(1/810, 405)
+weightsUnequal[1] <- 0.3
+weightsUnequal[2] <- 0.2
+weightedAvgEveScore <- scoreVariant(eveScoresGen$eveScores, weightsUnequal)
+weightedAvgEveScore
+
 }

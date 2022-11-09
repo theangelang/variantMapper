@@ -25,3 +25,30 @@ both variants.
 A function that visualizes EVE scores for two variants of the same gene
 simultaneously.
 }
+\examples{
+# Examples:
+# First process the EVE data and variant data.
+EvePath <- system.file("extdata", "NRX1B_HUMAN.vcf", package = "variantMapper")
+EveData <- processEveData(EvePath)
+EveData
+
+# If the data is in protein form.
+varDataProtPath <- system.file("extdata", "variant_data_protein.csv", package = "variantMapper")
+varDataProt <- processVariantData(varDataProtPath, protein = TRUE)
+varDataProt
+
+eveScoresProt <- getEveScores(EveData, varDataProt, protein = TRUE)
+eveScoresProt
+
+# If the data is in genomic form.
+varDataGenPath <- system.file("extdata", "variant_data_genomic.csv", package = "variantMapper")
+varDataGen <- processVariantData(varDataGenPath, protein = FALSE)
+varDataGen
+
+eveScoresGen <- getEveScores(EveData, varDataGen, protein = FALSE)
+eveScoresGen
+
+compareVariantsPlot <- visualizeVariant2(eveScoresProt, eveScoresGen)
+compareVariantsPlot
+
+}

@@ -10,6 +10,37 @@
 #'
 #' @return A lollipop graph showing the EVE score at each residue position.
 #'
+#' @export
+#'
+#' @examples
+#' # Examples:
+#' # First process the EVE data and variant data.
+#' EvePath <- system.file("extdata", "NRX1B_HUMAN.vcf", package = "variantMapper")
+#' EveData <- processEveData(EvePath)
+#' EveData
+#'
+#' # If the data is in protein form.
+#' varDataProtPath <- system.file("extdata", "variant_data_protein.csv", package = "variantMapper")
+#' varDataProt <- processVariantData(varDataProtPath, protein = TRUE)
+#' varDataProt
+#'
+#' eveScoresProt <- getEveScores(EveData, varDataProt, protein = TRUE)
+#' eveScoresProt
+#'
+#' variantPlotProt <- visualizeVariant(eveScoresProt)
+#' variantPlotProt
+#'
+#' # If the data is in genomic form.
+#' varDataGenPath <- system.file("extdata", "variant_data_genomic.csv", package = "variantMapper")
+#' varDataGen <- processVariantData(varDataGenPath, protein = FALSE)
+#' varDataGen
+#'
+#' eveScoresGen <- getEveScores(EveData, varDataGen, protein = FALSE)
+#' eveScoresGen
+#'
+#' variantPlotGen <- visualizeVariant(eveScoresGen)
+#' variantPlotGen
+#'
 #' @import ggplot2
 
 visualizeVariant <- function(eveInfo) {
@@ -51,6 +82,34 @@ visualizeVariant <- function(eveInfo) {
 #' @return A lollipop graph showing the EVE score at each residue position for
 #' both variants.
 #'
+#' @export
+#'
+#' @examples
+#' # Examples:
+#' # First process the EVE data and variant data.
+#' EvePath <- system.file("extdata", "NRX1B_HUMAN.vcf", package = "variantMapper")
+#' EveData <- processEveData(EvePath)
+#' EveData
+#'
+#' # If the data is in protein form.
+#' varDataProtPath <- system.file("extdata", "variant_data_protein.csv", package = "variantMapper")
+#' varDataProt <- processVariantData(varDataProtPath, protein = TRUE)
+#' varDataProt
+#'
+#' eveScoresProt <- getEveScores(EveData, varDataProt, protein = TRUE)
+#' eveScoresProt
+#'
+#' # If the data is in genomic form.
+#' varDataGenPath <- system.file("extdata", "variant_data_genomic.csv", package = "variantMapper")
+#' varDataGen <- processVariantData(varDataGenPath, protein = FALSE)
+#' varDataGen
+#'
+#' eveScoresGen <- getEveScores(EveData, varDataGen, protein = FALSE)
+#' eveScoresGen
+#'
+#' compareVariantsPlot <- visualizeVariant2(eveScoresProt, eveScoresGen)
+#' compareVariantsPlot
+#'
 #' @import ggplot2
 
 visualizeVariant2 <- function(eveInfo1, eveInfo2) {
@@ -68,3 +127,5 @@ visualizeVariant2 <- function(eveInfo1, eveInfo2) {
     labs(x = "Residue Position", y = "EVE Score", color = "EVE Score")
   return(p)
 }
+
+# [END]

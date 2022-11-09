@@ -34,3 +34,27 @@ protein form it will take the average of the EVE scores for that amino acid
 mutation since EVE data is available down to the single nucleotide variation
 level and multiple codons code for the same amino acid.
 }
+\examples{
+# Example:
+# First process the EVE data and variant data.
+EvePath <- system.file("extdata", "NRX1B_HUMAN.vcf", package = "variantMapper")
+EveData <- processEveData(EvePath)
+EveData
+
+# If the data is in protein form.
+varDataProtPath <- system.file("extdata", "variant_data_protein.csv", package = "variantMapper")
+varDataProt <- processVariantData(varDataProtPath, protein = TRUE)
+varDataProt
+
+eveScores <- getEveScores(EveData, varDataProt, protein = TRUE)
+eveScores
+
+# If the data is in genomic form.
+varDataGenPath <- system.file("extdata", "variant_data_genomic.csv", package = "variantMapper")
+varDataGen <- processVariantData(varDataGenPath, protein = FALSE)
+varDataGen
+
+eveScores <- getEveScores(EveData, varDataGen, protein = FALSE)
+eveScores
+
+}
