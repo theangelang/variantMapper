@@ -13,6 +13,23 @@
 #'
 #' @return Returns a tibble with the data from the csv file provided.
 #'
+#' @export
+#'
+#' @examples
+#' # Example
+#' # Get the variant data in the right format depending on if it is protein or
+#' # genomic data.
+#'
+#' # If the data is in protein form.
+#' varDataProtPath <- system.file("extdata", "variant_data_protein.csv", package = "variantMapper")
+#' varDataProt <- processVariantData(varDataProtPath, protein = TRUE)
+#' varDataProt
+#'
+#' # If the data is in genomic form.
+#' varDataGenPath <- system.file("extdata", "variant_data_genomic.csv", package = "variantMapper")
+#' varDataGen <- processVariantData(varDataGenPath, protein = FALSE)
+#' varDataGen
+#'
 #' @import tibble
 #'
 #' @importFrom utils read.csv

@@ -22,3 +22,19 @@ it has the columns required for downstream analysis depending on if
 the variant data is in genomic or protein coordinates, and processes it for
 future use.
 }
+\examples{
+# Example
+# Get the variant data in the right format depending on if it is protein or
+# genomic data.
+
+# If the data is in protein form.
+varDataProtPath <- system.file("extdata", "variant_data_protein.csv", package = "variantMapper")
+varDataProt <- processVariantData(varDataProtPath, protein = TRUE)
+varDataProt
+
+# If the data is in genomic form.
+varDataGenPath <- system.file("extdata", "variant_data_genomic.csv", package = "variantMapper")
+varDataGen <- processVariantData(varDataGenPath, protein = FALSE)
+varDataGen
+
+}
