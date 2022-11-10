@@ -52,7 +52,15 @@
 #' @import ggplot2
 
 visualizeVariant <- function(eveInfo, geneName = "X", aboveZeroOnly = FALSE) {
-  # TODO: add check to make sure has those columns
+
+  # check if eveInfo has correct columns
+  eveInfoCols <- colnames(eveInfo)
+  expectedEveCols <- c("resPos", "eveScores", "wtAa", "varAa")
+
+  if (!setequal(eveInfoCols, expectedEveCols)) {
+    stop("eveInfo does not have expected columns.  Ensure you used
+         getEveScores to get the EVE scores for this variant first.")
+  }
 
   eveInfoCopy <- eveInfo
 
