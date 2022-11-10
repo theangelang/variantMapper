@@ -4,7 +4,7 @@
 \alias{visualizeVariant2}
 \title{Visualize EVE scores of two variants for one gene.}
 \usage{
-visualizeVariant2(eveInfo1, eveInfo2)
+visualizeVariant2(eveInfo1, eveInfo2, geneName = "X")
 }
 \arguments{
 \item{eveInfo1}{Tibble for the first variant with EVE scores for each residue
@@ -16,6 +16,9 @@ provided doesn't have an EVE score.}
 residue position that has a score calculated by EVE, residue position,
 wildtype amino acid, and mutated amino acid.  If there are NaNs it means the
 variant provided doesn't have an EVE score.}
+
+\item{geneName}{String that is the name of the gene.  If not supplied the
+default is X.}
 }
 \value{
 A lollipop graph showing the EVE score at each residue position for
@@ -48,7 +51,7 @@ varDataGen
 eveScoresGen <- getEveScores(EveData, varDataGen, protein = FALSE)
 eveScoresGen
 
-compareVariantsPlot <- visualizeVariant2(eveScoresProt, eveScoresGen)
+compareVariantsPlot <- visualizeVariant2(eveScoresProt, eveScoresGen, "NRXN1")
 compareVariantsPlot
 
 }

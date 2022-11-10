@@ -4,13 +4,16 @@
 \alias{visualizeVariant}
 \title{Visualizes EVE score for a protein variant.}
 \usage{
-visualizeVariant(eveInfo)
+visualizeVariant(eveInfo, geneName = "X")
 }
 \arguments{
 \item{eveInfo}{Tibble with EVE scores for each residue
 position that has a score calculated by EVE, residue position, wildtype amino
 acid, and mutated amino acid.  If there are NaNs it means the variant
 provided doesn't have an EVE score.}
+
+\item{geneName}{String that is the name of the gene.  If not supplied the
+default is X.}
 }
 \value{
 A lollipop graph showing the EVE score at each residue position.
@@ -45,7 +48,7 @@ varDataGen
 eveScoresGen <- getEveScores(EveData, varDataGen, protein = FALSE)
 eveScoresGen
 
-variantPlotGen <- visualizeVariant(eveScoresGen)
+variantPlotGen <- visualizeVariant(eveScoresGen, "NRXN1")
 variantPlotGen
 
 }

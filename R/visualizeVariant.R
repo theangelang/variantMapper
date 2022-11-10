@@ -8,6 +8,9 @@
 #' acid, and mutated amino acid.  If there are NaNs it means the variant
 #' provided doesn't have an EVE score.
 #'
+#' @param geneName String that is the name of the gene.  If not supplied the
+#' default is X.
+#'
 #' @return A lollipop graph showing the EVE score at each residue position.
 #'
 #' @export
@@ -38,14 +41,14 @@
 #' eveScoresGen <- getEveScores(EveData, varDataGen, protein = FALSE)
 #' eveScoresGen
 #'
-#' variantPlotGen <- visualizeVariant(eveScoresGen)
+#' variantPlotGen <- visualizeVariant(eveScoresGen, "NRXN1")
 #' variantPlotGen
 #'
 #' @import ggplot2
 
-visualizeVariant <- function(eveInfo) {
+visualizeVariant <- function(eveInfo, geneName = "X") {
   # TODO: add check to make sure has those columns
-  # TODO: handle the NaN values and turn to 0
+  # TODO: Add filtering away 0s and replace NaN with 0
   p <- ggplot(eveInfo, aes(x=resPos, y=eveScores)) +
     geom_segment( aes(x=resPos, xend=resPos, y=0, yend=eveScores), color="grey") +
     geom_point(aes(color=eveScores), size=4) +
@@ -60,7 +63,11 @@ visualizeVariant <- function(eveInfo) {
       panel.border = element_blank(),
       axis.ticks.x = element_blank()
     ) +
-    labs(x = "Residue Position", y = "EVE Score", color = "EVE Score")
+    labs(title = paste("EVE scores vs Residue Positions for", geneName, sep = " "),
+         x = "Residue Position",
+         y = "EVE Score",
+         color = "EVE Score")
+
   return(p)
 }
 
@@ -78,6 +85,9 @@ visualizeVariant <- function(eveInfo) {
 #' residue position that has a score calculated by EVE, residue position,
 #' wildtype amino acid, and mutated amino acid.  If there are NaNs it means the
 #' variant provided doesn't have an EVE score.
+#'
+#' @param geneName String that is the name of the gene.  If not supplied the
+#' default is X.
 #'
 #' @return A lollipop graph showing the EVE score at each residue position for
 #' both variants.
@@ -107,13 +117,15 @@ visualizeVariant <- function(eveInfo) {
 #' eveScoresGen <- getEveScores(EveData, varDataGen, protein = FALSE)
 #' eveScoresGen
 #'
-#' compareVariantsPlot <- visualizeVariant2(eveScoresProt, eveScoresGen)
+#' compareVariantsPlot <- visualizeVariant2(eveScoresProt, eveScoresGen, "NRXN1")
 #' compareVariantsPlot
 #'
 #' @import ggplot2
 
-visualizeVariant2 <- function(eveInfo1, eveInfo2) {
+visualizeVariant2 <- function(eveInfo1, eveInfo2, geneName = "X") {
   # this one compares variants from different samples onto one gene
+  # TODO: add check to make sure has those columns
+  # TODO: Add filtering away 0s and replace NaN with 0
   p <- ggplot(eveInfo1, aes(x=resPos, y=eveScores)) +
     geom_segment(data=eveInfo1, aes(x=resPos, xend=resPos, y=0, yend=eveScores), color="grey") +
     geom_point(data=eveInfo1, aes(color="Variant 1"), size=4) +
@@ -125,7 +137,11 @@ visualizeVariant2 <- function(eveInfo1, eveInfo2) {
       panel.border = element_blank(),
       axis.ticks.x = element_blank()
     ) +
-    labs(x = "Residue Position", y = "EVE Score", color = "EVE Score")
+    labs(title = paste("EVE scores vs Residue Positions for", geneName, sep = " "),
+         x = "Residue Position",
+         y = "EVE Score",
+         color = "EVE Score")
+
   return(p)
 }
 
