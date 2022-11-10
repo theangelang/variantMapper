@@ -160,7 +160,21 @@ visualizeVariant <- function(eveInfo, geneName = "X", aboveZeroOnly = FALSE) {
 
 visualizeVariant2 <- function(eveInfo1, eveInfo2, geneName = "X", aboveZeroOnly = FALSE) {
   # this one compares variants from different samples onto one gene
-  # TODO: add check to make sure has those columns
+
+  # check if eveInfo1 and eveInfo2 have correct columns
+  eveInfo1Cols <- colnames(eveInfo1)
+  eveInfo2Cols <- colnames(eveInfo2)
+  expectedEveCols <- c("resPos", "eveScores", "wtAa", "varAa")
+
+  if (!setequal(eveInfo1Cols, expectedEveCols)) {
+    stop("eveInfo1 does not have expected columns.  Ensure you used
+         getEveScores to get the EVE scores for this variant first.")
+  }
+
+  if (!setequal(eveInfo2Cols, expectedEveCols)) {
+    stop("eveInfo2 does not have expected columns.  Ensure you used
+         getEveScores to get the EVE scores for this variant first.")
+  }
 
   eveInfo1Copy <- eveInfo1
   eveInfo2Copy <- eveInfo2
