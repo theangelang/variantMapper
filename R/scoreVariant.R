@@ -64,13 +64,16 @@ scoreVariant <- function(eveScores, posWeights = rep(1/length(eveScores), length
     if (length(eveScores) != length(posWeights)) {
       warning("The length of the posWeights vector isn't the same as the length of eveScores.
               The default for posWeights will be used instead.")
-      posWeightsCopy <- rep(1/length(eveScores), length(eveScores))
+
+    } else if (sum(posWeights) != 1) {
+      warning("The sum of the posWeights vector does not add to 1.  The default
+            posWeights will be used assigning each position equal weight.")
     }
+    posWeightsCopy <- rep(1/length(eveScores), length(eveScores))
   }
 
   # check if there are NaN values
-
-  if(sum(is.nan(eveScores)) != 0) {
+  if (sum(is.nan(eveScores)) != 0) {
     warning("eveScores contains NaN values.  They will be replaced with 0 values.")
     eveScoresCopy[is.nan(eveScoresCopy)] <- 0
   }
