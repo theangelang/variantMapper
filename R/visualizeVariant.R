@@ -144,7 +144,8 @@ visualizeVariant <- function(eveInfo, geneName = "X", aboveZeroOnly = FALSE) {
 #' compareVariantsPlot <- visualizeVariant2(eveScoresProt, eveScoresGen, "NRXN1")
 #' compareVariantsPlot
 #'
-#' compareVariantsPlotAboveZero <- visualizeVariant2(eveScoresProt, eveScoresGen, "NRXN1", aboveZeroOnly = TRUE)
+#' compareVariantsPlotAboveZero <- visualizeVariant2(eveScoresProt,
+#' eveScoresGen, "NRXN1", aboveZeroOnly = TRUE)
 #' compareVariantsPlotAboveZero
 #'
 #' @import ggplot2

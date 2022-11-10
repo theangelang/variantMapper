@@ -59,7 +59,8 @@ eveScoresGen
 compareVariantsPlot <- visualizeVariant2(eveScoresProt, eveScoresGen, "NRXN1")
 compareVariantsPlot
 
-compareVariantsPlotAboveZero <- visualizeVariant2(eveScoresProt, eveScoresGen, "NRXN1", aboveZeroOnly = TRUE)
+compareVariantsPlotAboveZero <- visualizeVariant2(eveScoresProt,
+eveScoresGen, "NRXN1", aboveZeroOnly = TRUE)
 compareVariantsPlotAboveZero
 
 }
