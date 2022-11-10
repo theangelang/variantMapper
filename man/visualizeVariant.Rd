@@ -4,7 +4,7 @@
 \alias{visualizeVariant}
 \title{Visualizes EVE score for a protein variant.}
 \usage{
-visualizeVariant(eveInfo, geneName = "X")
+visualizeVariant(eveInfo, geneName = "X", aboveZeroOnly = FALSE)
 }
 \arguments{
 \item{eveInfo}{Tibble with EVE scores for each residue
@@ -14,13 +14,18 @@ provided doesn't have an EVE score.}
 
 \item{geneName}{String that is the name of the gene.  If not supplied the
 default is X.}
+
+\item{aboveZeroOnly}{Logical value that indicates whether to include EVE scores
+of 0.  The default is FALSE so EVE scores of 0 will be included.  Note if
+there are NaN values they will be excluded as well since they will be changed
+to 0 first.}
 }
 \value{
 A lollipop graph showing the EVE score at each residue position.
 }
 \description{
 A function that visualizes EVE scores of a variant at residue positions where
-EVE scores are possible.
+EVE scores are possible.  Function will replace EVE scores of NaN values with 0.
 }
 \examples{
 # Examples:
@@ -37,7 +42,7 @@ varDataProt
 eveScoresProt <- getEveScores(EveData, varDataProt, protein = TRUE)
 eveScoresProt
 
-variantPlotProt <- visualizeVariant(eveScoresProt)
+variantPlotProt <- visualizeVariant(eveScoresProt, aboveZeroOnly = TRUE)
 variantPlotProt
 
 # If the data is in genomic form.

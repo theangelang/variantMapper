@@ -4,7 +4,7 @@
 \alias{visualizeVariant2}
 \title{Visualize EVE scores of two variants for one gene.}
 \usage{
-visualizeVariant2(eveInfo1, eveInfo2, geneName = "X")
+visualizeVariant2(eveInfo1, eveInfo2, geneName = "X", aboveZeroOnly = FALSE)
 }
 \arguments{
 \item{eveInfo1}{Tibble for the first variant with EVE scores for each residue
@@ -19,6 +19,11 @@ variant provided doesn't have an EVE score.}
 
 \item{geneName}{String that is the name of the gene.  If not supplied the
 default is X.}
+
+\item{aboveZeroOnly}{Logical value that indicates whether to include EVE scores
+of 0.  The default is FALSE so EVE scores of 0 will be included.  Note if
+there are NaN values they will be excluded as well since they will be changed
+to 0 first.}
 }
 \value{
 A lollipop graph showing the EVE score at each residue position for
@@ -26,7 +31,7 @@ both variants.
 }
 \description{
 A function that visualizes EVE scores for two variants of the same gene
-simultaneously.
+simultaneously.  Function will replace EVE scores of NaN values with 0
 }
 \examples{
 # Examples:
@@ -53,5 +58,8 @@ eveScoresGen
 
 compareVariantsPlot <- visualizeVariant2(eveScoresProt, eveScoresGen, "NRXN1")
 compareVariantsPlot
+
+compareVariantsPlotAboveZero <- visualizeVariant2(eveScoresProt, eveScoresGen, "NRXN1", aboveZeroOnly = TRUE)
+compareVariantsPlotAboveZero
 
 }
