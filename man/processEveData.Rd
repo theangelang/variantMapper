@@ -25,7 +25,7 @@ processes it for future use.
 # for a gene
 
 \dontrun{
-EvePath <- system.file("extdata", "NRX1B_HUMAN.vcf", package = "variantMapper")
+EvePath <- system.file("extdata", "NRX1B_HUMAN_SUBSET.vcf", package = "variantMapper")
 EveData <- processEveData(EvePath)
 EveData
 }

@@ -17,7 +17,7 @@
 #' @examples
 #' # Examples:
 #' # First process the EVE data and variant data.
-#' EvePath <- system.file("extdata", "NRX1B_HUMAN.vcf", package = "variantMapper")
+#' EvePath <- system.file("extdata", "NRX1B_HUMAN_SUBSET.vcf", package = "variantMapper")
 #' EveData <- processEveData(EvePath)
 #' EveData
 #'
@@ -43,7 +43,7 @@
 #'
 #' # Get the weighted average EVE score to see overall how pathogenic this variant is
 #' # Assign more weight to the first few residue positions
-#' weightsUnequal <- rep(1/810, 405)
+#' weightsUnequal <- rep(1/(2 * length(eveScoresGen$eveScores)), length(eveScoresGen$eveScores))
 #' weightsUnequal[1] <- 0.3
 #' weightsUnequal[2] <- 0.2
 #' weightedAvgEveScore <- scoreVariant(eveScoresGen$eveScores, weightsUnequal)

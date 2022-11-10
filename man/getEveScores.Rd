@@ -37,7 +37,7 @@ level and multiple codons code for the same amino acid.
 \examples{
 # Example:
 # First process the EVE data and variant data.
-EvePath <- system.file("extdata", "NRX1B_HUMAN.vcf", package = "variantMapper")
+EvePath <- system.file("extdata", "NRX1B_HUMAN_SUBSET.vcf", package = "variantMapper")
 EveData <- processEveData(EvePath)
 EveData
 
