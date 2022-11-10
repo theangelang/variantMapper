@@ -107,7 +107,7 @@ constructAltSeq <- function(refData, ntPos, genomicCoord, varNt) {
 #' @examples
 #' # Example:
 #' # First process the EVE data and variant data.
-#' EvePath <- system.file("extdata", "NRX1B_HUMAN.vcf", package = "variantMapper")
+#' EvePath <- system.file("extdata", "NRX1B_HUMAN_SUBSET.vcf", package = "variantMapper")
 #' EveData <- processEveData(EvePath)
 #' EveData
 #'
@@ -175,7 +175,7 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
         eveScores[[pos]] <- NaN
         varAas[[pos]] <- mut$varAa# udpate the varAa
       } else if (nrow(varSubset) == 1) {
-        eveScores[[pos]] <- varSubset[1, eveCol]
+        eveScores[[pos]] <- varSubset[[1, eveCol]]
         varAas[[pos]] <- varSubset[[1, varAaCol]]# udpate the varAa
       } else {
         # assign EVE score as the average
@@ -185,7 +185,7 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
         varAas[[pos]] <- varSubset[[1, varAaCol]]# udpate the varAa
       }
     }
-    result <- tibble::tibble(eveScores,
+    result <- tibble::tibble(eveScores = unname(eveScores),
                              resPos = wtAaPos$resPos,
                              wtAa = unname(wtAas),
                              varAa = unname(varAas))
@@ -237,7 +237,6 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
                          genomicCoord = ntPosAndGenomicCoord$genomicCoord,
                          ntPos = ntPosAndGenomicCoord$ntPos)
 
-
     # get EVE data for variants
     # TODO: check if it has those columns first
     variants <- dplyr::inner_join(eveData,
@@ -262,7 +261,7 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
       if (nrow(varSubset) == 0) {
         # variant isn't scored
         eveScores[[pos]] <- NaN
-        varAas[[pos]] <- mut$varAa# udpate the varAa
+        varAas[[pos]] <- mut$varAa # udpate the varAa
       } else if (nrow(varSubset) == 1) {
         eveScores[[pos]] <- varSubset[1,]$EVE
         varAas[[pos]] <- varSubset[1,]$varAa # udpate the varAa
@@ -274,7 +273,7 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
         varAas[[pos]] <- varSubset[1,]$varAa # udpate the varAa
       }
     }
-    return(tibble(eveScores,
+    return(tibble(eveScores = unname(eveScores),
                   resPos = wtAaPos$resPos,
                   wtAa = unname(wtAas),
                   varAa = unname(varAas)))
