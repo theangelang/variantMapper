@@ -7,8 +7,8 @@ test_that("Handles invalid input", {
 test_that("Results are of expected length", {
   EvePath <- system.file("extdata", "NRX1B_HUMAN_SUBSET.vcf", package = "variantMapper")
   processedEveData <- processEveData(EvePath)
-  expect_equal(1824, nrow(processedEveData))
-  expect_equal(26, ncol(processedEveData))
+  expect_equal(nrow(processedEveData), 1824)
+  expect_equal(ncol(processedEveData), 26)
 })
 
 test_that("Results have expected columns", {
@@ -18,5 +18,5 @@ test_that("Results have expected columns", {
                "Class80", "Class90", "wtAa", "resPos", "varAa")
   EvePath <- system.file("extdata", "NRX1B_HUMAN_SUBSET.vcf", package = "variantMapper")
   processedEveData <- processEveData(EvePath)
-  expect_equal(columns, colnames(processedEveData))
+  expect_equal(colnames(processedEveData), columns)
 })
