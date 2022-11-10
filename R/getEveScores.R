@@ -132,8 +132,32 @@ constructAltSeq <- function(refData, ntPos, genomicCoord, varNt) {
 
 getEveScores <- function(eveData, variantData, protein = TRUE) {
 
-  # eveData is the tibble
-  # return a vector with the EVE score for all the proteins with EVE score
+  # check if eveData has correct columns
+  eveDataCols <- colnames(eveData)
+  expectedEveCols <- c("CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER",
+                       "Key", "EVE", "EnsTranscript", "RevStr", "ProtMut",
+                       "Class10", "Class20", "Class25", "Class30", "Class40",
+                       "Class50", "Class60", "Class70", "Class75", "Class80",
+                       "Class90", "wtAa", "resPos", "varAa")
+  if (!setequal(eveDataCols, expectedEveCols)) {
+    stop("eveData does not have expected columns.  Ensure you used
+         processEveData to format the EVE vcf file first.")
+  }
+
+  # check if variantData has correct columns
+  variantDataCols <- colnames(variantData)
+
+  if (isTRUE(protein)) {
+    expectedVarCols <- c("wtAa", "resPos", "varAa")
+  } else {
+    expectedVarCols <- c("CHROM", "start", "end", "REF", "ALT")
+  }
+
+  if (!setequal(variantDataCols, expectedVarCols)) {
+    stop("variantData does not have expected columns.  Ensure the protein
+      argument is filled out properly depending on the data type and that you
+      used processVariantData to format the variant data first.")
+  }
 
   # get pairs of distinct wtAa and residue positions
   wtAaPos <- uniqueWtAaPos(eveData)
