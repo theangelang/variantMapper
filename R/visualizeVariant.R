@@ -115,8 +115,9 @@ visualizeVariant <- function(eveInfo) {
 visualizeVariant2 <- function(eveInfo1, eveInfo2) {
   # this one compares variants from different samples onto one gene
   p <- ggplot(eveInfo1, aes(x=resPos, y=eveScores)) +
-    geom_segment(aes(x=resPos, xend=resPos, y=0, yend=eveScores), color="grey") +
+    geom_segment(data=eveInfo1, aes(x=resPos, xend=resPos, y=0, yend=eveScores), color="grey") +
     geom_point(data=eveInfo1, aes(color="Variant 1"), size=4) +
+    geom_segment(data=eveInfo2, aes(x=resPos, xend=resPos, y=0, yend=eveScores), color="grey") +
     geom_point(data=eveInfo2, aes(color="Variant 2"), size=4) +
     theme_light() +
     theme(
