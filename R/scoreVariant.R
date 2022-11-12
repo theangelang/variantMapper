@@ -30,7 +30,7 @@
 #' eveScoresProt
 #'
 #' # Get the weighted average EVE score to see overall how pathogenic this variant is
-#' avgEveScore <- scoreVariant(eveScoresProt$eveScores) #using the default of uniform weights
+#' avgEveScore <- scoreVariant(eveScoresProt$eveScores) # using the default of uniform weights
 #' avgEveScore
 #'
 #' # If the data is in genomic form.

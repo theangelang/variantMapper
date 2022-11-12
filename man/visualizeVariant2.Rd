@@ -31,7 +31,9 @@ both variants.
 }
 \description{
 A function that visualizes EVE scores for two variants of the same gene
-simultaneously.  Function will replace EVE scores of NaN values with 0
+simultaneously.  Function will replace EVE scores of NaN values with 0.  The
+colors in the EVE score variant represent pathogenicity with 1 as most pathogenic
+and 0 as benign.
 }
 \examples{
 # Examples:
