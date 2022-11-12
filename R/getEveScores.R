@@ -1,90 +1,3 @@
-#' Helper function to get unique wild type amino acids at each residue
-#' position.
-#'
-#' @param eveData A tibble with columns "wtAa" and "resPos" with 1 letter amino
-#' acid codes and residue position respectively.
-#'
-#' @return A tibble with unique wild type amino acid and residue position
-#' combinations.
-#'
-#' @noRd
-
-uniqueWtAaPos <- function(eveData) {
-  cols <- colnames(eveData)
-  if ("wtAa" %in% cols & "resPos" %in% cols) {
-    wtAaPos <- dplyr::distinct(eveData, wtAa, resPos)
-  } else {
-    stop("eveData doesn't have required columns 'wtAa' and 'resPos'.")
-  }
-  return(wtAaPos)
-}
-
-#' Helper function to find out which nucleotide position of a codon is mutated.
-#'
-#' @param coordinates A vector of doubles indicating the start position in the
-#' genome for each residue.
-#'
-#' @param varCoord An integer representing where in the genome the mutation
-#' occurred.
-#'
-#' @return A vector of length 2 with the nucleotide position (1, 2, or 3) in the
-#'  first position and the genomic coordinate of the first nucleotide in the
-#'  corresponding codon in the second position.  If the varCoord is not in the
-#'  coordinates it will return a vector of length 2 with values of NaN for both
-#'  values.
-#'
-#' @noRd
-
-findVariantPosition <- function(coordinates, varCoord) {
-  if (varCoord %in% coordinates) {
-    return(c(ntPos = 1, genomicCoord = varCoord))
-  } else if ((varCoord - 1) %in% coordinates) {
-    return(c(ntPos = 2, genomicCoord = varCoord - 1))
-  } else if ((varCoord - 2) %in% coordinates) {
-    return(c(ntPos = 3, genomicCoord = varCoord - 2))
-  } else {
-    # the genomic coordiante is not scored
-    return(c(ntPos = NaN, genomicCoord = NaN))
-  }
-}
-
-#' Helper function to construct the alternate codon sequence corresponding to
-#' the single nucleotide variant (SNV).
-#'
-#' @param refData A tibble with three columns "POS" for the genomic position,
-#' "REF" for the wild type codon, and "resPos" for the residue position.
-#'
-#' @param ntPos An integer indicating which position in the codon the SNV
-#' occurred the first, second or third.
-#'
-#' @param genomicCoord A double representing the genomic coordinate of the first
-#' nucleotide in the corresponding codon for the SNV.
-#'
-#' @param varNt A character vector representing the nucelotide variant.
-#'
-#' @return A tibble with reference codon, alternate codon, and residue position.
-#'
-#' @noRd
-
-constructAltSeq <- function(refData, ntPos, genomicCoord, varNt) {
-
-  cols <- colnames(refData)
-
-  if (!("POS" %in% cols) | !("REF" %in% cols) | !("resPos" %in% cols)) {
-    stop("Ensure refData has 'POS', 'REF', and 'resPos' columns.")
-  }
-
-  refInfo <- dplyr::filter(refData, POS == genomicCoord) # get the matching row
-  refCodon <- refInfo[1, ]$REF
-  resPos <- refInfo[1, ]$resPos
-
-  # produce the alternative codon seq
-  altCodon <- refInfo[1, ]$REF # initially assign it ref codon seq
-  stringr::str_sub(altCodon, ntPos, ntPos) <- varNt # change to alternate codon
-                                                    # seq
-  return(tibble(refCodon = refCodon, altCodon = altCodon, resPos = resPos))
-}
-
 #' Gets the EVE score for the amino acids in variant of interest.
 #'
 #' A function that takes in EVE and variant data then will get the EVE score for
@@ -300,6 +213,93 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
                   varAa = unname(varAas))
     return(result)
   }
+}
+
+#' Helper function to get unique wild type amino acids at each residue
+#' position.
+#'
+#' @param eveData A tibble with columns "wtAa" and "resPos" with 1 letter amino
+#' acid codes and residue position respectively.
+#'
+#' @return A tibble with unique wild type amino acid and residue position
+#' combinations.
+#'
+#' @noRd
+
+uniqueWtAaPos <- function(eveData) {
+  cols <- colnames(eveData)
+  if ("wtAa" %in% cols & "resPos" %in% cols) {
+    wtAaPos <- dplyr::distinct(eveData, wtAa, resPos)
+  } else {
+    stop("eveData doesn't have required columns 'wtAa' and 'resPos'.")
+  }
+  return(wtAaPos)
+}
+
+#' Helper function to find out which nucleotide position of a codon is mutated.
+#'
+#' @param coordinates A vector of doubles indicating the start position in the
+#' genome for each residue.
+#'
+#' @param varCoord An integer representing where in the genome the mutation
+#' occurred.
+#'
+#' @return A vector of length 2 with the nucleotide position (1, 2, or 3) in the
+#'  first position and the genomic coordinate of the first nucleotide in the
+#'  corresponding codon in the second position.  If the varCoord is not in the
+#'  coordinates it will return a vector of length 2 with values of NaN for both
+#'  values.
+#'
+#' @noRd
+
+findVariantPosition <- function(coordinates, varCoord) {
+  if (varCoord %in% coordinates) {
+    return(c(ntPos = 1, genomicCoord = varCoord))
+  } else if ((varCoord - 1) %in% coordinates) {
+    return(c(ntPos = 2, genomicCoord = varCoord - 1))
+  } else if ((varCoord - 2) %in% coordinates) {
+    return(c(ntPos = 3, genomicCoord = varCoord - 2))
+  } else {
+    # the genomic coordiante is not scored
+    return(c(ntPos = NaN, genomicCoord = NaN))
+  }
+}
+
+#' Helper function to construct the alternate codon sequence corresponding to
+#' the single nucleotide variant (SNV).
+#'
+#' @param refData A tibble with three columns "POS" for the genomic position,
+#' "REF" for the wild type codon, and "resPos" for the residue position.
+#'
+#' @param ntPos An integer indicating which position in the codon the SNV
+#' occurred the first, second or third.
+#'
+#' @param genomicCoord A double representing the genomic coordinate of the first
+#' nucleotide in the corresponding codon for the SNV.
+#'
+#' @param varNt A character vector representing the nucelotide variant.
+#'
+#' @return A tibble with reference codon, alternate codon, and residue position.
+#'
+#' @noRd
+
+constructAltSeq <- function(refData, ntPos, genomicCoord, varNt) {
+
+  cols <- colnames(refData)
+
+  if (!("POS" %in% cols) | !("REF" %in% cols) | !("resPos" %in% cols)) {
+    stop("Ensure refData has 'POS', 'REF', and 'resPos' columns.")
+  }
+
+  refInfo <- dplyr::filter(refData, POS == genomicCoord) # get the matching row
+  refCodon <- refInfo[1, ]$REF
+  resPos <- refInfo[1, ]$resPos
+
+  # produce the alternative codon seq
+  altCodon <- refInfo[1, ]$REF # initially assign it ref codon seq
+  stringr::str_sub(altCodon, ntPos, ntPos) <- varNt # change to alternate codon
+  # seq
+  return(tibble(refCodon = refCodon, altCodon = altCodon, resPos = resPos))
 }
 
 # [END]
