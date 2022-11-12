@@ -7,13 +7,14 @@
 visualizeVariant(eveInfo, geneName = "X", aboveZeroOnly = FALSE)
 }
 \arguments{
-\item{eveInfo}{Tibble with EVE scores for each residue
-position that has a score calculated by EVE, residue position, wildtype amino
-acid, and mutated amino acid.  If there are NaNs it means the variant
-provided doesn't have an EVE score.}
+\item{eveInfo}{Tibble with EVE scores for each residue position that has a
+score calculated by EVE, residue position, wildtype amino acid, and mutated
+amino acid.  If there are NaNs it means the variant provided doesn't have an
+EVE score for that particular mutation at that position.  These NaN values
+will be replaced by 0.}
 
-\item{geneName}{String that is the name of the gene.  If not supplied the
-default is X.}
+\item{geneName}{A character vector that is the name of the gene.  If not
+supplied the default is X.}
 
 \item{aboveZeroOnly}{Logical value that indicates whether to include EVE scores
 of 0.  The default is FALSE so EVE scores of 0 will be included.  Note if
@@ -26,6 +27,8 @@ A lollipop graph showing the EVE score at each residue position.
 \description{
 A function that visualizes EVE scores of a variant at residue positions where
 EVE scores are possible.  Function will replace EVE scores of NaN values with 0.
+The colors assigned to EVE scorea represent pathogenicity with 1 as most
+pathogenic and 0 as benign.
 }
 \examples{
 # Examples:

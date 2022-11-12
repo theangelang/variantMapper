@@ -2,14 +2,17 @@
 #'
 #' A function that visualizes EVE scores of a variant at residue positions where
 #' EVE scores are possible.  Function will replace EVE scores of NaN values with 0.
+#' The colors assigned to EVE scorea represent pathogenicity with 1 as most
+#' pathogenic and 0 as benign.
 #'
-#' @param eveInfo Tibble with EVE scores for each residue
-#' position that has a score calculated by EVE, residue position, wildtype amino
-#' acid, and mutated amino acid.  If there are NaNs it means the variant
-#' provided doesn't have an EVE score.
+#' @param eveInfo Tibble with EVE scores for each residue position that has a
+#' score calculated by EVE, residue position, wildtype amino acid, and mutated
+#' amino acid.  If there are NaNs it means the variant provided doesn't have an
+#' EVE score for that particular mutation at that position.  These NaN values
+#' will be replaced by 0.
 #'
-#' @param geneName String that is the name of the gene.  If not supplied the
-#' default is X.
+#' @param geneName A character vector that is the name of the gene.  If not
+#' supplied the default is X.
 #'
 #' @param aboveZeroOnly Logical value that indicates whether to include EVE scores
 #' of 0.  The default is FALSE so EVE scores of 0 will be included.  Note if
@@ -78,7 +81,8 @@ visualizeVariant <- function(eveInfo, geneName = "X", aboveZeroOnly = FALSE) {
   }
 
   p <- ggplot2::ggplot(eveInfoCopy, aes(x=resPos, y=eveScores)) +
-    ggplot2::geom_segment(aes(x=resPos, xend=resPos, y=0, yend=eveScores), color="grey") +
+    ggplot2::geom_segment(aes(x=resPos, xend=resPos, y=0, yend=eveScores),
+                          color="grey") +
     ggplot2::geom_point(aes(color=eveScores), size=4) +
     ggplot2::scale_colour_gradient2(
       low = "steelblue1",
@@ -99,25 +103,25 @@ visualizeVariant <- function(eveInfo, geneName = "X", aboveZeroOnly = FALSE) {
   return(p)
 }
 
-#' Visualize EVE scores of two variants for one gene.
+#' Visualize EVE scores of two variants for one gene simultaneously.
 #'
 #' A function that visualizes EVE scores for two variants of the same gene
-#' simultaneously.  Function will replace EVE scores of NaN values with 0.  The
-#' colors in the EVE score variant represent pathogenicity with 1 as most pathogenic
-#' and 0 as benign.
+#' simultaneously.  Function will replace EVE scores of NaN values with 0.
 #'
 #' @param eveInfo1 Tibble for the first variant with EVE scores for each residue
 #' position that has a score calculated by EVE, residue position, wildtype amino
 #' acid, and mutated amino acid.  If there are NaNs it means the variant
-#' provided doesn't have an EVE score.
+#' provided doesn't have an EVE score for that particular mutation at that
+#' position.  These NaN values will be replaced by 0.
 #'
 #' @param eveInfo2 Tibble for the second variant with EVE scores for each
 #' residue position that has a score calculated by EVE, residue position,
 #' wildtype amino acid, and mutated amino acid.  If there are NaNs it means the
-#' variant provided doesn't have an EVE score.
+#' variant provided doesn't have an EVE score for that particular mutation at
+#' that position.  These NaN values will be replaced by 0.
 #'
-#' @param geneName String that is the name of the gene.  If not supplied the
-#' default is X.
+#' @param geneName A character vector that is the name of the gene.  If not
+#' supplied the default is X.
 #'
 #' @param aboveZeroOnly Logical value that indicates whether to include EVE scores
 #' of 0.  The default is FALSE so EVE scores of 0 will be included.  Note if
@@ -163,7 +167,8 @@ visualizeVariant <- function(eveInfo, geneName = "X", aboveZeroOnly = FALSE) {
 #' @import ggplot2 dplyr
 
 visualizeVariant2 <- function(eveInfo1, eveInfo2, geneName = "X", aboveZeroOnly = FALSE) {
-  # this one compares variants from different samples onto one gene
+  # this one compares variants of the same gene, for example variants from
+  # different samples
 
   # check if eveInfo1 and eveInfo2 have correct columns
   eveInfo1Cols <- colnames(eveInfo1)
@@ -202,9 +207,11 @@ visualizeVariant2 <- function(eveInfo1, eveInfo2, geneName = "X", aboveZeroOnly 
     }
 
   p <- ggplot2::ggplot(eveInfo1Copy, aes(x=resPos, y=eveScores)) +
-    ggplot2::geom_segment(data=eveInfo1Copy, aes(x=resPos, xend=resPos, y=0, yend=eveScores), color="grey") +
+    ggplot2::geom_segment(data=eveInfo1Copy, aes(x=resPos, xend=resPos, y=0, yend=eveScores),
+                          color="grey") +
     ggplot2::geom_point(data=eveInfo1Copy, aes(color="Variant 1"), size=4) +
-    ggplot2::geom_segment(data=eveInfo2Copy, aes(x=resPos, xend=resPos, y=0, yend=eveScores), color="grey") +
+    ggplot2::geom_segment(data=eveInfo2Copy, aes(x=resPos, xend=resPos, y=0, yend=eveScores),
+                          color="grey") +
     ggplot2::geom_point(data=eveInfo2Copy, aes(color="Variant 2"), size=4) +
     ggplot2::theme_light() +
     ggplot2::theme(

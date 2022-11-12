@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualizeVariant.R
 \name{visualizeVariant2}
 \alias{visualizeVariant2}
-\title{Visualize EVE scores of two variants for one gene.}
+\title{Visualize EVE scores of two variants for one gene simultaneously.}
 \usage{
 visualizeVariant2(eveInfo1, eveInfo2, geneName = "X", aboveZeroOnly = FALSE)
 }
@@ -10,15 +10,17 @@ visualizeVariant2(eveInfo1, eveInfo2, geneName = "X", aboveZeroOnly = FALSE)
 \item{eveInfo1}{Tibble for the first variant with EVE scores for each residue
 position that has a score calculated by EVE, residue position, wildtype amino
 acid, and mutated amino acid.  If there are NaNs it means the variant
-provided doesn't have an EVE score.}
+provided doesn't have an EVE score for that particular mutation at that
+position.  These NaN values will be replaced by 0.}
 
 \item{eveInfo2}{Tibble for the second variant with EVE scores for each
 residue position that has a score calculated by EVE, residue position,
 wildtype amino acid, and mutated amino acid.  If there are NaNs it means the
-variant provided doesn't have an EVE score.}
+variant provided doesn't have an EVE score for that particular mutation at
+that position.  These NaN values will be replaced by 0.}
 
-\item{geneName}{String that is the name of the gene.  If not supplied the
-default is X.}
+\item{geneName}{A character vector that is the name of the gene.  If not
+supplied the default is X.}
 
 \item{aboveZeroOnly}{Logical value that indicates whether to include EVE scores
 of 0.  The default is FALSE so EVE scores of 0 will be included.  Note if
@@ -31,9 +33,7 @@ both variants.
 }
 \description{
 A function that visualizes EVE scores for two variants of the same gene
-simultaneously.  Function will replace EVE scores of NaN values with 0.  The
-colors in the EVE score variant represent pathogenicity with 1 as most pathogenic
-and 0 as benign.
+simultaneously.  Function will replace EVE scores of NaN values with 0.
 }
 \examples{
 # Examples:
