@@ -1,16 +1,17 @@
 #' Scores a variant of a protein based on weighted average.
 #'
-#' @param eveScores A vector containing EVE scores for each residue position
-#' that has a possible EVE
-#' score.
+#' A function that returns the weighted average EVE score of a protein variant.
 #'
-#' @param posWeights The weights to give each residue position when calculating
-#' the weighted average of EVE scores for the protein variant.  The default is
-#' using equal weights for each residue position i.e. 1/(number of residues with
-#' EVE scores).  This is used when an argument is not passed into the posWeights
-#' parameter.
+#' @param eveScores A vector of doubles containing EVE scores for each residue
+#' position that has a possible EVE score.
 #'
-#' @return Returns a double with the weighted EVE score for the protein variant.
+#' @param posWeights A vector of doubles representing the weights to give each
+#' residue position when calculating the weighted average of EVE scores for the
+#' protein variant.  The default is using equal weights for each residue
+#' position i.e. 1/(number of residues with EVE scores).  This is used when an
+#' argument is not passed into the posWeights parameter.
+#'
+#' @return A double with the weighted EVE score for the protein variant.
 #'
 #' @export
 #'
@@ -53,8 +54,6 @@
 #' @importFrom stats weighted.mean
 
 scoreVariant <- function(eveScores, posWeights = rep(1/length(eveScores), length(eveScores))) {
-  # what to do if there are NaN, can replace with 0 and don't need to change the weights
-  # or can change the weight so take that weight and redistribute
 
   eveScoresCopy <- eveScores
   posWeightsCopy <- posWeights

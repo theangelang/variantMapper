@@ -10,21 +10,20 @@ scoreVariant(
 )
 }
 \arguments{
-\item{eveScores}{A vector containing EVE scores for each residue position
-that has a possible EVE
-score.}
+\item{eveScores}{A vector of doubles containing EVE scores for each residue
+position that has a possible EVE score.}
 
-\item{posWeights}{The weights to give each residue position when calculating
-the weighted average of EVE scores for the protein variant.  The default is
-using equal weights for each residue position i.e. 1/(number of residues with
-EVE scores).  This is used when an argument is not passed into the posWeights
-parameter.}
+\item{posWeights}{A vector of doubles representing the weights to give each
+residue position when calculating the weighted average of EVE scores for the
+protein variant.  The default is using equal weights for each residue
+position i.e. 1/(number of residues with EVE scores).  This is used when an
+argument is not passed into the posWeights parameter.}
 }
 \value{
-Returns a double with the weighted EVE score for the protein variant.
+A double with the weighted EVE score for the protein variant.
 }
 \description{
-Scores a variant of a protein based on weighted average.
+A function that returns the weighted average EVE score of a protein variant.
 }
 \examples{
 # Examples:
