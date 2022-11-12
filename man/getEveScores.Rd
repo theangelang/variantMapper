@@ -15,24 +15,22 @@ been processed by the processVariantData function.  Assumption is that there
 will only be one variant at each residue/genomic position and the wildtype
 and variant amino acid are distinct from one another.  For protein data it
 will be missense variants only and genomic data single nucleotide variants
-only.  Won't try to score mutations that result in wildtype and variant amino
-acid being the same.  Assume variants are independent of each other.}
+only.  The assumption is that variants are independent of each other.}
 
-\item{protein}{Specifies whether the variant data is in protein or genomic
-form.  By default it is set to TRUE meaning the default is protein form.}
+\item{protein}{A logical value specifying whether the variant data is in
+protein or genomic form.  By default it is set to TRUE meaning the default is
+protein form.  If it is set to FALSE it means the variant data is in genomic
+form.}
 }
 \value{
-Returns a tibble containing the EVE scores for each residue
-position that has a score calculated by EVE, residue position, wildtype amino
-acid, and mutated amino acid.  If there are NaNs it means the variant
+A tibble containing the EVE scores for each residue
+position that has a score calculated by EVE, the residue position, wildtype
+amino acid, and mutated amino acid.  If there are NaNs it means the variant
 provided doesn't have an EVE score.
 }
 \description{
 A function that takes in EVE and variant data then will get the EVE score for
-each amino acid in the variant of interest.  If the data is supplied in
-protein form it will take the average of the EVE scores for that amino acid
-mutation since EVE data is available down to the single nucleotide variation
-level and multiple codons code for the same amino acid.
+each amino acid in the variant of interest.
 }
 \examples{
 # Example:

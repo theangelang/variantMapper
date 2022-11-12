@@ -1,17 +1,21 @@
-#' Helper function to get a list of unique wild type amino acids at each residue
+#' Helper function to get unique wild type amino acids at each residue
 #' position.
 #'
-#' @param eveData A tibble with a column "wtAa" and "resPos" with 1 letter amino
-#' acid code and residue position respectively.
+#' @param eveData A tibble with columns "wtAa" and "resPos" with 1 letter amino
+#' acid codes and residue position respectively.
 #'
-#' @return A tibble with wild type amino acid and residue position.
+#' @return A tibble with unique wild type amino acid and residue position
+#' combinations.
 #'
 #' @noRd
 
 uniqueWtAaPos <- function(eveData) {
-  # Note- wtAa and resPos are columns in eveData
-  # TODO: Include check to make sure they are in the eveData
-  wtAaPos <- dplyr::distinct(eveData, wtAa, resPos)
+  cols <- colnames(eveData)
+  if ("wtAa" %in% cols & "resPos" %in% cols) {
+    wtAaPos <- dplyr::distinct(eveData, wtAa, resPos)
+  } else {
+    stop("eveData doesn't have required columns 'wtAa' and 'resPos'.")
+  }
   return(wtAaPos)
 }
 
@@ -25,8 +29,9 @@ uniqueWtAaPos <- function(eveData) {
 #'
 #' @return A vector of length 2 with the nucleotide position (1, 2, or 3) in the
 #'  first position and the genomic coordinate of the first nucleotide in the
-#'  corresponding codon.  If the varCoord is not in the coordinates it will
-#'  return a vector of length 2 with values of NaN for both values.
+#'  corresponding codon in the second position.  If the varCoord is not in the
+#'  coordinates it will return a vector of length 2 with values of NaN for both
+#'  values.
 #'
 #' @noRd
 
@@ -46,30 +51,35 @@ findVariantPosition <- function(coordinates, varCoord) {
 #' Helper function to construct the alternate codon sequence corresponding to
 #' the single nucleotide variant (SNV).
 #'
-#' @param refData A tibble with three columns POS for the genomic position, REF
-#' for the wild type codon, and resPos for the residue position.
+#' @param refData A tibble with three columns "POS" for the genomic position,
+#' "REF" for the wild type codon, and "resPos" for the residue position.
 #'
-#' @param ntPos Which position in the codon the SNV occurred the first, second or
-#' third.
+#' @param ntPos An integer indicating which position in the codon the SNV
+#' occurred the first, second or third.
 #'
-#' @param genomicCoord The genomic coordinate of the first nucleotide in the
-#' corresponding codon for the SNV.
+#' @param genomicCoord A double representing the genomic coordinate of the first
+#' nucleotide in the corresponding codon for the SNV.
 #'
-#' @param varNt The nucelotide variant.
+#' @param varNt A character vector representing the nucelotide variant.
 #'
 #' @return A tibble with reference codon, alternate codon, and residue position.
 #'
 #' @noRd
 
 constructAltSeq <- function(refData, ntPos, genomicCoord, varNt) {
-  # TODO: POS is column in refData, check if it is present
-  # TODO: check if REF and resPos present too
+
+  cols <- colnames(refData)
+
+  if (!("POS" %in% cols) | !("REF" %in% cols) | !("resPos" %in% cols)) {
+    stop("Ensure refData has 'POS', 'REF', and 'resPos' columns.")
+  }
+
   refInfo <- dplyr::filter(refData, POS == genomicCoord) # get the matching row
-  refCodon <- refInfo[1,]$REF
-  resPos <- refInfo[1,]$resPos
+  refCodon <- refInfo[1, ]$REF
+  resPos <- refInfo[1, ]$resPos
 
   # produce the alternative codon seq
-  altCodon <- refInfo[1,]$REF # initially assign it ref codon seq
+  altCodon <- refInfo[1, ]$REF # initially assign it ref codon seq
   stringr::str_sub(altCodon, ntPos, ntPos) <- varNt # change to alternate codon
                                                     # seq
   return(tibble(refCodon = refCodon, altCodon = altCodon, resPos = resPos))
@@ -78,10 +88,7 @@ constructAltSeq <- function(refData, ntPos, genomicCoord, varNt) {
 #' Gets the EVE score for the amino acids in variant of interest.
 #'
 #' A function that takes in EVE and variant data then will get the EVE score for
-#' each amino acid in the variant of interest.  If the data is supplied in
-#' protein form it will take the average of the EVE scores for that amino acid
-#' mutation since EVE data is available down to the single nucleotide variation
-#' level and multiple codons code for the same amino acid.
+#' each amino acid in the variant of interest.
 #'
 #' @param eveData A tibble containing the EVE data that has already been
 #' processed by the processEveData function.
@@ -91,15 +98,16 @@ constructAltSeq <- function(refData, ntPos, genomicCoord, varNt) {
 #' will only be one variant at each residue/genomic position and the wildtype
 #' and variant amino acid are distinct from one another.  For protein data it
 #' will be missense variants only and genomic data single nucleotide variants
-#' only.  Won't try to score mutations that result in wildtype and variant amino
-#' acid being the same.  Assume variants are independent of each other.
+#' only.  The assumption is that variants are independent of each other.
 #'
-#' @param protein Specifies whether the variant data is in protein or genomic
-#' form.  By default it is set to TRUE meaning the default is protein form.
+#' @param protein A logical value specifying whether the variant data is in
+#' protein or genomic form.  By default it is set to TRUE meaning the default is
+#' protein form.  If it is set to FALSE it means the variant data is in genomic
+#' form.
 #'
-#' @return Returns a tibble containing the EVE scores for each residue
-#' position that has a score calculated by EVE, residue position, wildtype amino
-#' acid, and mutated amino acid.  If there are NaNs it means the variant
+#' @return A tibble containing the EVE scores for each residue
+#' position that has a score calculated by EVE, the residue position, wildtype
+#' amino acid, and mutated amino acid.  If there are NaNs it means the variant
 #' provided doesn't have an EVE score.
 #'
 #' @export
@@ -127,8 +135,8 @@ constructAltSeq <- function(refData, ntPos, genomicCoord, varNt) {
 #' eveScores <- getEveScores(EveData, varDataGen, protein = FALSE)
 #' eveScores
 #'
-#' @importFrom stats setNames
 #' @import dplyr tibble
+#' @importFrom stats setNames
 
 getEveScores <- function(eveData, variantData, protein = TRUE) {
 
@@ -175,19 +183,17 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
   if (isTRUE(protein)) {
     # no translation required
 
-    # TODO: do a null check for variants
-    variants <- dplyr::inner_join(eveData, variantData) # variants with EVE data
+    # variants with EVE data
+    variants <- suppressMessages(dplyr::inner_join(eveData, variantData))
 
     eveCol <- which(colnames(variants) == "EVE") # get column with EVE score
     varAaCol <- which(colnames(variants) == "varAa")
 
     # loop through the variant data
     for (i in 1:nrow(variantData)) {
-      mut <- variantData[i,]
+      mut <- variantData[i, ]
       pos <- as.character(mut$resPos) # get position where to put the score
 
-      # get a subset of all the rows in EVE data with that wtAa, resPos, varAa
-      # TODO: check if it has all those columns
       varSubset <- dplyr::filter(variants,
                                  wtAa == mut$wtAa,
                                  resPos == mut$resPos,
@@ -197,16 +203,14 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
       if (nrow(varSubset) == 0) {
         # variant isn't scored
         eveScores[[pos]] <- NaN
-        varAas[[pos]] <- mut$varAa# udpate the varAa
+        varAas[[pos]] <- mut$varAa # udpate the varAa
       } else if (nrow(varSubset) == 1) {
         eveScores[[pos]] <- varSubset[[1, eveCol]]
-        varAas[[pos]] <- varSubset[[1, varAaCol]]# udpate the varAa
+        varAas[[pos]] <- varSubset[[1, varAaCol]] # udpate the varAa
       } else {
         # assign EVE score as the average
-        # TODO: look into if all variants mutate to same aa but different codon
-        # have same EVE score
         eveScores[[pos]] <- mean(varSubset$EVE)
-        varAas[[pos]] <- varSubset[[1, varAaCol]]# udpate the varAa
+        varAas[[pos]] <- varSubset[[1, varAaCol]] # udpate the varAa
       }
     }
     result <- tibble::tibble(eveScores = unname(eveScores),
@@ -218,7 +222,6 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
     # it is in genomic coordinates
 
     # unique genomic coordinates, wt seq, and residue position in EVE data
-    # TODO: check it has all those cols first
     uniqueGenomicCoords <- dplyr::distinct(eveData, POS, REF, resPos)
 
     # data processing checked if all variants are single nucleotide variants
@@ -226,7 +229,6 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
 
     # get the nucleotide position in the codon and corresponding start genomic
     # coordinate for the codon
-    # TODO: check it has all those cols first
     ntPosAndGenomicCoord <- sapply(variantData$start,
                                    findVariantPosition,
                                    coordinates = uniqueGenomicCoords$POS)
@@ -240,14 +242,13 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
 
     #construct the alternative allele for each variant
     for (i in 1:nrow(variantData)) {
-      # TODO: check it has all those columns first
       converted <- constructAltSeq(refData = uniqueGenomicCoords,
-                                   ntPos = ntPosAndGenomicCoord[i,]$ntPos,
-                                   genomicCoord = ntPosAndGenomicCoord[i,]$genomicCoord,
-                                   varNt = variantData[i,]$ALT)
-      refCodons[i] <- converted[1,]$refCodon
-      altCodons[i] <- converted[1,]$altCodon
-      resPos[i] <- converted[1,]$resPos
+                                   ntPos = ntPosAndGenomicCoord[i, ]$ntPos,
+                                   genomicCoord = ntPosAndGenomicCoord[i, ]$genomicCoord,
+                                   varNt = variantData[i, ]$ALT)
+      refCodons[i] <- converted[1, ]$refCodon
+      altCodons[i] <- converted[1, ]$altCodon
+      resPos[i] <- converted[1, ]$resPos
     }
 
     resPos <- as.numeric(resPos)
@@ -262,7 +263,6 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
                          ntPos = ntPosAndGenomicCoord$ntPos)
 
     # get EVE data for variants
-    # TODO: check if it has those columns first
     variants <- dplyr::inner_join(eveData,
                                   mutatedVariantData,
                                   by = c("POS" = "genomicCoord",
@@ -271,11 +271,10 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
 
     # get EVE score for variants
     for (i in 1:nrow(variantData)) {
-      mut <- mutatedVariantData[i,]
+      mut <- mutatedVariantData[i, ]
       pos <- as.character(mut$resPos) # get position where to put the score
 
       # find EVE data that matches variant
-      # TODO: check if it has all those columns first
       varSubset <- dplyr::filter(variants,
                                  POS == mut$genomicCoord,
                                  resPos == mut$resPos,
@@ -287,14 +286,12 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
         eveScores[[pos]] <- NaN
         varAas[[pos]] <- mut$varAa # udpate the varAa
       } else if (nrow(varSubset) == 1) {
-        eveScores[[pos]] <- varSubset[1,]$EVE
-        varAas[[pos]] <- varSubset[1,]$varAa # udpate the varAa
+        eveScores[[pos]] <- varSubset[1, ]$EVE
+        varAas[[pos]] <- varSubset[1, ]$varAa # udpate the varAa
       } else {
         # assign EVE score as the average
-        # TODO: look into if all variants mutate to same aa but different codon
-        # have same EVE score
         eveScores[[pos]] <- mean(varSubset$EVE)
-        varAas[[pos]] <- varSubset[1,]$varAa # udpate the varAa
+        varAas[[pos]] <- varSubset[1, ]$varAa # udpate the varAa
       }
     }
     result <- tibble::tibble(eveScores = unname(eveScores),
