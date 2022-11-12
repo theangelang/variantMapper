@@ -5,13 +5,15 @@
 #' the variant data is in genomic or protein coordinates, and processes it for
 #' future use.
 #'
-#' @param filePath The filepath to the csv file containing variant information
-#' about the variant and gene of interest.
+#' @param filePath A character vector of the filepath to the csv file containing
+#' variant information for the gene of interest.
 #'
-#' @param protein This argument specifies whether the input data is in genomic
-#' or protein coordinates.
+#' @param protein A logical value specifying whether the input data is in
+#' genomic or protein coordinates.  If TRUE the data contains protein
+#' information and protein coordinates; this is the default.  If FALSE it
+#' contains genomic information and genomic coordinates.
 #'
-#' @return Returns a tibble with the data from the csv file provided.
+#' @return A tibble with the data from the csv file provided.
 #'
 #' @export
 #'

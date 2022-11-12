@@ -7,14 +7,16 @@
 processVariantData(filePath, protein = TRUE)
 }
 \arguments{
-\item{filePath}{The filepath to the csv file containing variant information
-about the variant and gene of interest.}
+\item{filePath}{A character vector of the filepath to the csv file containing
+variant information for the gene of interest.}
 
-\item{protein}{This argument specifies whether the input data is in genomic
-or protein coordinates.}
+\item{protein}{A logical value specifying whether the input data is in
+genomic or protein coordinates.  If TRUE the data contains protein
+information and protein coordinates; this is the default.  If FALSE it
+contains genomic information and genomic coordinates.}
 }
 \value{
-Returns a tibble with the data from the csv file provided.
+A tibble with the data from the csv file provided.
 }
 \description{
 A function that checks if the data provided is in the right format (csv), if

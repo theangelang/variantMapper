@@ -25,9 +25,7 @@ processes it for future use.
 # Get the EVE data in the correct format by accessing raw EVE data provided
 # for a gene
 
-EvePath <- system.file("extdata",
-                       "NRX1B_HUMAN_SUBSET.vcf",
-                       package = "variantMapper")
+EvePath <- system.file("extdata", "NRX1B_HUMAN_SUBSET.vcf", package = "variantMapper")
 EveData <- processEveData(EvePath)
 EveData
 
