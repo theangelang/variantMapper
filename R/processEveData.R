@@ -47,9 +47,8 @@ processEveData <- function(filePath) {
   # combine 2 tibbles to 1
   eveData <- dplyr::bind_cols(seqInfoTibble, eveScores)
 
-  # convert the CHROM and POS columns to numeric
-  i <- c(1, 2)
-  eveData[ , i] <- apply(eveData[ , i],
+  # convert the POS columns to numeric
+  eveData[ , 2] <- apply(eveData[ , 2],
                          2,
                          function(x) as.numeric(as.character((x))))
 
