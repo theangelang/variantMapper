@@ -139,7 +139,7 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
                        "Class10", "Class20", "Class25", "Class30", "Class40",
                        "Class50", "Class60", "Class70", "Class75", "Class80",
                        "Class90", "wtAa", "resPos", "varAa")
-  if (!setequal(eveDataCols, expectedEveCols)) {
+  if (!dplyr::setequal(eveDataCols, expectedEveCols)) {
     stop("eveData does not have expected columns.  Ensure you used
          processEveData to format the EVE vcf file first.")
   }
@@ -153,7 +153,7 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
     expectedVarCols <- c("CHROM", "start", "end", "REF", "ALT")
   }
 
-  if (!setequal(variantDataCols, expectedVarCols)) {
+  if (!dplyr::setequal(variantDataCols, expectedVarCols)) {
     stop("variantData does not have expected columns.  Ensure the protein
       argument is filled out properly depending on the data type and that you
       used processVariantData to format the variant data first.")
@@ -297,10 +297,11 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
         varAas[[pos]] <- varSubset[1,]$varAa # udpate the varAa
       }
     }
-    return(tibble(eveScores = unname(eveScores),
+    result <- tibble::tibble(eveScores = unname(eveScores),
                   resPos = wtAaPos$resPos,
                   wtAa = unname(wtAas),
-                  varAa = unname(varAas)))
+                  varAa = unname(varAas))
+    return(result)
   }
 }
 

@@ -49,7 +49,8 @@
 #' variantPlotGen <- visualizeVariant(eveScoresGen, "NRXN1")
 #' variantPlotGen
 #'
-#' @import ggplot2
+#' @importFrom methods hasArg
+#' @import ggplot2 dplyr
 
 visualizeVariant <- function(eveInfo, geneName = "X", aboveZeroOnly = FALSE) {
 
@@ -57,7 +58,7 @@ visualizeVariant <- function(eveInfo, geneName = "X", aboveZeroOnly = FALSE) {
   eveInfoCols <- colnames(eveInfo)
   expectedEveCols <- c("resPos", "eveScores", "wtAa", "varAa")
 
-  if (!setequal(eveInfoCols, expectedEveCols)) {
+  if (!dplyr::setequal(eveInfoCols, expectedEveCols)) {
     stop("eveInfo does not have expected columns.  Ensure you used
          getEveScores to get the EVE scores for this variant first.")
   }
@@ -73,24 +74,24 @@ visualizeVariant <- function(eveInfo, geneName = "X", aboveZeroOnly = FALSE) {
   if (methods::hasArg(aboveZeroOnly)) {
     if (isTRUE(aboveZeroOnly)) {
       eveInfoCopy <- dplyr::filter(eveInfoCopy, eveScores != 0)
-      }
     }
+  }
 
-  p <- ggplot(eveInfoCopy, aes(x=resPos, y=eveScores)) +
-    geom_segment(aes(x=resPos, xend=resPos, y=0, yend=eveScores), color="grey") +
-    geom_point(aes(color=eveScores), size=4) +
-    scale_colour_gradient2(
+  p <- ggplot2::ggplot(eveInfoCopy, aes(x=resPos, y=eveScores)) +
+    ggplot2::geom_segment(aes(x=resPos, xend=resPos, y=0, yend=eveScores), color="grey") +
+    ggplot2::geom_point(aes(color=eveScores), size=4) +
+    ggplot2::scale_colour_gradient2(
       low = "steelblue1",
       mid = "gray",
       high = "firebrick1",
       midpoint = 0.5) +
-    theme_light() +
-    theme(
+    ggplot2::theme_light() +
+    ggplot2::theme(
       panel.grid.major.x = element_blank(),
       panel.border = element_blank(),
       axis.ticks.x = element_blank()
     ) +
-    labs(title = paste("EVE scores vs Residue Positions for", geneName, sep = " "),
+    ggplot2::labs(title = paste("EVE scores vs Residue Positions for", geneName, sep = " "),
          x = "Residue Position",
          y = "EVE Score",
          color = "EVE Score")
@@ -101,7 +102,9 @@ visualizeVariant <- function(eveInfo, geneName = "X", aboveZeroOnly = FALSE) {
 #' Visualize EVE scores of two variants for one gene.
 #'
 #' A function that visualizes EVE scores for two variants of the same gene
-#' simultaneously.  Function will replace EVE scores of NaN values with 0
+#' simultaneously.  Function will replace EVE scores of NaN values with 0.  The
+#' colors in the EVE score variant represent pathogenicity with 1 as most pathogenic
+#' and 0 as benign.
 #'
 #' @param eveInfo1 Tibble for the first variant with EVE scores for each residue
 #' position that has a score calculated by EVE, residue position, wildtype amino
@@ -156,7 +159,8 @@ visualizeVariant <- function(eveInfo, geneName = "X", aboveZeroOnly = FALSE) {
 #' eveScoresGen, "NRXN1", aboveZeroOnly = TRUE)
 #' compareVariantsPlotAboveZero
 #'
-#' @import ggplot2
+#' @importFrom methods hasArg
+#' @import ggplot2 dplyr
 
 visualizeVariant2 <- function(eveInfo1, eveInfo2, geneName = "X", aboveZeroOnly = FALSE) {
   # this one compares variants from different samples onto one gene
@@ -166,12 +170,12 @@ visualizeVariant2 <- function(eveInfo1, eveInfo2, geneName = "X", aboveZeroOnly 
   eveInfo2Cols <- colnames(eveInfo2)
   expectedEveCols <- c("resPos", "eveScores", "wtAa", "varAa")
 
-  if (!setequal(eveInfo1Cols, expectedEveCols)) {
+  if (!dplyr::setequal(eveInfo1Cols, expectedEveCols)) {
     stop("eveInfo1 does not have expected columns.  Ensure you used
          getEveScores to get the EVE scores for this variant first.")
   }
 
-  if (!setequal(eveInfo2Cols, expectedEveCols)) {
+  if (!dplyr::setequal(eveInfo2Cols, expectedEveCols)) {
     stop("eveInfo2 does not have expected columns.  Ensure you used
          getEveScores to get the EVE scores for this variant first.")
   }
@@ -197,18 +201,18 @@ visualizeVariant2 <- function(eveInfo1, eveInfo2, geneName = "X", aboveZeroOnly 
       }
     }
 
-  p <- ggplot(eveInfo1Copy, aes(x=resPos, y=eveScores)) +
-    geom_segment(data=eveInfo1Copy, aes(x=resPos, xend=resPos, y=0, yend=eveScores), color="grey") +
-    geom_point(data=eveInfo1Copy, aes(color="Variant 1"), size=4) +
-    geom_segment(data=eveInfo2Copy, aes(x=resPos, xend=resPos, y=0, yend=eveScores), color="grey") +
-    geom_point(data=eveInfo2Copy, aes(color="Variant 2"), size=4) +
-    theme_light() +
-    theme(
+  p <- ggplot2::ggplot(eveInfo1Copy, aes(x=resPos, y=eveScores)) +
+    ggplot2::geom_segment(data=eveInfo1Copy, aes(x=resPos, xend=resPos, y=0, yend=eveScores), color="grey") +
+    ggplot2::geom_point(data=eveInfo1Copy, aes(color="Variant 1"), size=4) +
+    ggplot2::geom_segment(data=eveInfo2Copy, aes(x=resPos, xend=resPos, y=0, yend=eveScores), color="grey") +
+    ggplot2::geom_point(data=eveInfo2Copy, aes(color="Variant 2"), size=4) +
+    ggplot2::theme_light() +
+    ggplot2::theme(
       panel.grid.major.x = element_blank(),
       panel.border = element_blank(),
       axis.ticks.x = element_blank()
     ) +
-    labs(title = paste("EVE scores vs Residue Positions for", geneName, sep = " "),
+    ggplot2::labs(title = paste("EVE scores vs Residue Positions for", geneName, sep = " "),
          x = "Residue Position",
          y = "EVE Score",
          color = "EVE Score")

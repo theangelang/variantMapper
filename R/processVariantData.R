@@ -46,7 +46,7 @@ processVariantData <- function(filePath, protein = TRUE) {
   }
 
   # read in variant data
-  varData <- read.csv(file = filePath)
+  varData <- utils::read.csv(file = filePath)
 
   cols <- colnames(varData)
 
