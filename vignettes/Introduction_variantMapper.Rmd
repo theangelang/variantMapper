@@ -1,0 +1,106 @@
+---
+title: "Overview of variantMapper"
+author: Angela Ng
+date: "`r format(Sys.time(), '%d %b %Y')`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    number_sections: false
+vignette: >
+  %\VignetteIndexEntry{Introduction_variantMapper}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+## Introduction
+
+variantMapper is an R package designed to make it easier to annotate variants with an EVE score from EVE.  This EVE score represents the predicted pathogenicity of a missense mutation at that position determined by the unsupervised learning model, EVE.  EVE has been shown to have high accuracy at predictions of pathogenicity.  However, if one wants to use EVE's data as a source of validation of pathogenicity with other evidence or use it to filter which variants or locations of a gene to focus on they are not able to easily do so.  It requires manually downlaoding the file and finding the appropriate score if it exists.
+
+variantMapper makes this process easier and more efficient by annotating the variants of interest with an EVE score.  Additionally, it is able to provide a weighted average EVE score for a variant of a gene, representing on average the pathogenicity of residues scored while taking into account different weights from different regions in gene function.
+
+variantMapper also provides the ability to visually map variants to a gene and compare two variants of a single gene at once.
+
+```{r setup, eval=TRUE, message=FALSE}
+require("devtools")
+devtools::install_github("theangelang/variantMapper", build_vignettes = TRUE)
+library("variantMapper")
+```
+
+## Getting Started
+First, lets download some EVE data from the [EVE website](https://evemodel.org/) for a gene we will study.  We will look at NRXN1 and download the vcf format of the data.
+
+Next, we will need to process this data:
+```{r, warning=FALSE}
+EvePath <- system.file("extdata", "NRX1B_HUMAN_SUBSET.vcf", package = "variantMapper")
+EveData <- processEveData(EvePath)
+head(EveData)
+```
+
+We can now process the variant data.  This can be in either protein or genomic form.  Protein form will have the residue position, wildtype amino acid, and mutant amino acid.  Genomic form will have the chromosome number, start genomic coordinate, end genomic coordinate, reference nucleotide, and alternate nucleotide.  For the purpose of this tutorial we will look at variants of NRXN1 found in two different samples at once, but the user can look at just one at a time.
+
+```{r, warning=FALSE}
+# If the data is in protein form.
+varDataProtPath <- system.file("extdata", "variant_data_protein.csv", package = "variantMapper")
+varDataProt <- processVariantData(varDataProtPath, protein = TRUE)
+head(varDataProt)
+
+# If the data is in genomic form.
+varDataGenPath <- system.file("extdata", "variant_data_genomic.csv", package = "variantMapper")
+varDataGen <- processVariantData(varDataGenPath, protein = FALSE)
+head(varDataGen)
+```
+
+Now, we can move onto getting the EVE scores for these variants:
+
+```{r, warning=FALSE}
+# For the data in protein form
+eveScoresProt <- getEveScores(EveData, varDataProt, protein = TRUE)
+head(eveScoresProt)
+
+# For the data in genomic form
+eveScoresGen <- getEveScores(EveData, varDataGen, protein = FALSE)
+head(eveScoresGen)
+```
+
+Let's say we want to see the average EVE score for our variant that was originally in protein form with equal weights for each residue position.
+
+```{r, warning=FALSE}
+avgEveScore <- scoreVariant(eveScoresProt$eveScores) # using the default of uniform weights
+avgEveScore
+```
+
+We now have more information about NRXN1 and found out that residues 32 to 35 are the location of an important functional domain so we want to only look at the impact from variants in that region.
+
+```{r, warning=FALSE}
+weightsUnequal <- rep(0, 32)
+weightsUnequal[1:4] <- 0.25
+weightedAvgEveScore <- scoreVariant(eveScoresGen$eveScores, weightsUnequal)
+weightedAvgEveScore
+```
+
+Now that we have assigned EVE scores to our variants let's plot these EVE scores.  We can also specify whether we only want to examine EVE scores greater than zero, but we will keep them here.
+```{r, warning=FALSE}
+variantPlotProt <- visualizeVariant(eveScoresProt, aboveZeroOnly = FALSE)
+variantPlotProt
+
+variantPlotGen <- visualizeVariant(eveScoresGen, "NRXN1")
+variantPlotGen
+```
+
+Next, let's compare the variants together.
+
+```{r, warning=FALSE}
+compareVariantsPlot <- visualizeVariant2(eveScoresProt, eveScoresGen, "NRXN1", aboveZeroOnly = FALSE)
+compareVariantsPlot
+```
+
+Finally, let's take a look when we remove those with EVE scores of 0 (benign).
+
+```{r, warning=FALSE}
+compareVariantsPlotNonZero <- visualizeVariant2(eveScoresProt, eveScoresGen, "NRXN1", aboveZeroOnly = TRUE)
+compareVariantsPlotNonZero
+```
+
+Session Info:
+```{r}
+sessionInfo()
+```
