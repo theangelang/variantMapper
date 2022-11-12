@@ -3,12 +3,13 @@
 #' A function that checks if the data provided is in the right format (vcf) and
 #' processes it for future use.
 #'
-#' @param filePath The filepath to the vcf file from EVE containing information
-#' about the gene of interest such as the EVE scores.  This can be obtained
-#' from the EVE website by searching for the gene then selecting vcf under the
-#' download section.
+#' @param filePath A character vector of the filepath to the vcf file from EVE
+#' containing information about the gene of interest such as the EVE scores.
+#' This can be obtained from the EVE website
+#' (https://evemodel.org/download/protein) by searching for the gene then
+#' selecting vcf under the download section.
 #'
-#' @return Returns a tibble with the data from the vcf file provided.
+#' @return A tibble with the EVE data from the vcf file provided.
 #'
 #' @export
 #'
@@ -17,7 +18,9 @@
 #' # Get the EVE data in the correct format by accessing raw EVE data provided
 #' # for a gene
 #'
-#' EvePath <- system.file("extdata", "NRX1B_HUMAN_SUBSET.vcf", package = "variantMapper")
+#' EvePath <- system.file("extdata",
+#'                        "NRX1B_HUMAN_SUBSET.vcf",
+#'                        package = "variantMapper")
 #' EveData <- processEveData(EvePath)
 #' EveData
 #'
@@ -63,14 +66,14 @@ processEveData <- function(filePath) {
 
 }
 
-#' Helper function to extract wild type, residue position, and variant amino acid
-#' from ProtMut column in the EVE dataset.
+#' Helper function to extract wild type, residue position, and variant amino
+#' acid from ProtMut column in the EVE dataset.
 #'
-#' @param protMut Character vector of form
+#' @param protMut A character vector of form
 #' UniprotId_(WildTypeAminoAcid)(ResiduePosition)(VariantAminoAcid) without the
 #' brackets.
 #'
-#' @return Returns a tibble containing the wild type amino acid, residue
+#' @return A tibble containing the wild type amino acid, residue
 #' position, and variant amino acid.
 #'
 #' @noRd
@@ -83,10 +86,10 @@ getProtMutInfo <- function(protMut) {
   wtAa <- substr(aaChange, 1, 1)
 
   # get the variant amino acid
-  varAa <- stringr::str_sub(aaChange, -1) # from stringr package
+  varAa <- stringr::str_sub(aaChange, -1)
 
   resPos <- gsub("[^0-9.-]", "", aaChange) # replace all the characters with ""
-  resPos <- as.numeric(as.character(resPos))# convert to numeric
+  resPos <- as.numeric(as.character(resPos)) # convert to numeric
 
   res <- dplyr::tibble(wtAa, resPos, varAa)
 

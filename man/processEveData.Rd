@@ -7,13 +7,14 @@
 processEveData(filePath)
 }
 \arguments{
-\item{filePath}{The filepath to the vcf file from EVE containing information
-about the gene of interest such as the EVE scores.  This can be obtained
-from the EVE website by searching for the gene then selecting vcf under the
-download section.}
+\item{filePath}{A character vector of the filepath to the vcf file from EVE
+containing information about the gene of interest such as the EVE scores.
+This can be obtained from the EVE website
+(https://evemodel.org/download/protein) by searching for the gene then
+selecting vcf under the download section.}
 }
 \value{
-Returns a tibble with the data from the vcf file provided.
+A tibble with the EVE data from the vcf file provided.
 }
 \description{
 A function that checks if the data provided is in the right format (vcf) and
@@ -24,7 +25,9 @@ processes it for future use.
 # Get the EVE data in the correct format by accessing raw EVE data provided
 # for a gene
 
-EvePath <- system.file("extdata", "NRX1B_HUMAN_SUBSET.vcf", package = "variantMapper")
+EvePath <- system.file("extdata",
+                       "NRX1B_HUMAN_SUBSET.vcf",
+                       package = "variantMapper")
 EveData <- processEveData(EvePath)
 EveData
 
