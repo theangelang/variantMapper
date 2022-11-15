@@ -15,9 +15,7 @@ vignette: >
 
 variantMapper is an R package designed to make it easier to annotate variants with an EVE score from EVE.  This EVE score represents the predicted pathogenicity of a missense mutation at that position determined by the unsupervised learning model, EVE.  EVE has been shown to have high accuracy at predictions of pathogenicity.  However, if one wants to use EVE's data as a source of validation of pathogenicity with other evidence or use it to filter which variants or locations of a gene to focus on they are not able to easily do so.  It requires manually downlaoding the file and finding the appropriate score if it exists.
 
-variantMapper makes this process easier and more efficient by annotating the variants of interest with an EVE score.  Additionally, it is able to provide a weighted average EVE score for a variant of a gene, representing on average the pathogenicity of residues scored while taking into account different weights from different regions in gene function.
-
-variantMapper also provides the ability to visually map variants to a gene and compare two variants of a single gene at once.
+variantMapper makes this process easier and more efficient by annotating the variants of interest with an EVE score.  Additionally, it is able to provide a weighted average EVE score for a variant of a gene, representing on average the pathogenicity of residues scored while taking into account different regions of a gene are more important for gene function.  variantMapper also provides the ability to visually map variants to a gene and compare two variants of a single gene at once.
 
 ```{r setup, eval=TRUE, message=FALSE}
 require("devtools")
@@ -81,7 +79,9 @@ Now that we have assigned EVE scores to our variants let's plot these EVE scores
 ```{r, warning=FALSE}
 variantPlotProt <- visualizeVariant(eveScoresProt, aboveZeroOnly = FALSE)
 variantPlotProt
+```
 
+```{r, warning=FALSE}
 variantPlotGen <- visualizeVariant(eveScoresGen, "NRXN1")
 variantPlotGen
 ```
