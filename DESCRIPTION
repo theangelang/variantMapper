@@ -1,14 +1,19 @@
 Package: variantMapper
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Assigns missense and SNVs an EVE score (prediction of pathogenicity)
 Version: 0.1.0
 Authors@R: person("Angela", "Ng", 
                   email = "an.ng@mail.utoronto.ca", 
                   role = c("aut", "cre"),
                   comment = c(ORCID = "0000-0002-9200-1953"))
 Maintainer: Angela Ng <an.ng@mail.utoronto.ca>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Description: variantMapper allows users to assign variants of interest a 
+    prediction of pathogenicity by using the evolutionary model of variant 
+    effect (EVE).  It can assign pathogenicity predictions to missense variants 
+    and single nucleotide variants (SNVs) in both protein and genomic form.  
+    varaintMapper also provides functionality to visualize EVE scores for a 
+    variant of interest against the corresponding gene.  Up to two variants can 
+    be visualized at one time against the gene of interest. 
 License: MIT + file LICENSE
 Depends: R (>= 3.1.0)
 Encoding: UTF-8
