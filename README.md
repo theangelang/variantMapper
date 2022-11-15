@@ -9,26 +9,24 @@
 ## Description
 
 The goal of variantMapper is to make variant pathogenicity predictions
-from the Evolutionary model of Variant Effect (EVE) more easily
-accessible allowing for one source of variant pathogenicity predictions
-to be easily accessed. EVE is an unsupervised machine learning model
-shown to be accurate in its predictions and doesn’t rely on knowledge of
-protein function. It uses multiple sequence alignments to predict
-pathogenicity of missense variants. However, there are challenges with
-using EVE’s data. If one wants to assign predicted pathogenicity scores
-(EVE scores) from EVE they must download the EVE data for that gene and
-manually find the mutations corresponding to their variants. This is
-especially challenging for single nucleotide variants (SNVs).
-varaintMapper makes this process efficient and provides a visualization
-aspect to map variants to a gene. By making it easier to get a source of
-predicted pathogenicity for variants this can guide downstream analyses
-on which variants and regions of a gene to focus on saving both time and
-efforts. This can also serve as one form of validation for related
-studies. Currently, there are no tools to make the process of using data
+from the Evolutionary model of Variant Effect (EVE) more accessible
+allowing for one source of variant pathogenicity predictions to be
+easily accessed. EVE is an unsupervised machine learning model shown to
+be accurate in its predictions and doesn’t rely on knowledge of protein
+function. It uses multiple sequence alignments to predict pathogenicity
+of missense variants. However, there are challenges with using EVE’s
+data. If one wants to assign predicted pathogenicity scores (EVE scores)
+from EVE they must download the EVE data for that gene and manually find
+the mutations corresponding to their variants. This is especially
+challenging for single nucleotide variants (SNVs). varaintMapper makes
+this process efficient and provides a visualization aspect to map
+variants to a gene. By making it easier to get a source of pathogenicity
+predictions for variants this can guide downstream analyses on which
+variants and regions of a gene to focus on saving both time and efforts.
+This can also serve as one form of validation for related studies.
+Currently, there are no tools to make the process of using data
 generated from EVE easy and efficient to use. Additionally, EVE does not
 provide a visualization aspect for examining specific variants.
-
-Talk about snvs and
 
 ``` r
 R version 4.2.1 (2022-06-23)
@@ -66,10 +64,11 @@ and download the vcf file.
 The `processVariantData` function can take in variant data in either
 protein form or genomic form. If the variants are in protein form this
 refers to missense mutations where the wild type and alternate amino
-acids are listed. If the variants are in genomic form they will list the
+acids are listed in addition to residue position. If the variants are in
+genomic form they will list the chromosome, start genomic position, end
 genomic position, reference allele, and alternate allele. Note
-variantMapper currently only looks at SNVs for mutations in genomic
-form.
+variantMapper currently only looks at missense mutations in protein form
+and SNVs for mutations in genomic form.
 
 The `getEveScores` function assigns an EVE score to each residue with a
 possible EVE score based on the variant of interest.
@@ -85,6 +84,7 @@ The `visualizeVariant2` function plots the EVE scores at each position
 for two variants in one lollipop graph.
 
 An overview of the package is shown below:
+![](./inst/extdata/variantMapper_overview.png)
 
 ## Contributions
 
@@ -134,9 +134,11 @@ scale where 1 represents most pathogenic and 0 benign.
 
 ### `visualizeVariant2` function
 
-`ggplot2` was used to create the plot.
-dplyr`was used for data manipulation.  My contributions were ensuring the data was of the appropriate form and manipulating it.  Additionally, I used aspects of the`ggplot2\`
-package to map two variants’ EVE scores to the residue position.
+`ggplot2` was used to create the plot. `dplyr` was used for data
+manipulation. My contributions were ensuring the data was of the
+appropriate form and manipulating it. Additionally, I used aspects of
+the `ggplot2` package to map two variants’ EVE scores to the residue
+position.
 
 ## References
 
@@ -182,18 +184,3 @@ This package was developed as part of an assessment for 2022 BCB410H:
 Applied Bioinformat- ics course at the University of Toronto, Toronto,
 CANADA. variantMapper welcomes issues, enhancement requests, and other
 contributions. To submit an issue, use the GitHub issues.
-
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this. You could also
-use GitHub Actions to re-render `README.Rmd` every time you push. An
-example workflow can be found here:
-<https://github.com/r-lib/actions/tree/v1/examples>.
-
-You can also embed plots, for example:
-
-<img src="man/figures/README-pressure-1.png" width="100%" />
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
-
-![](./inst/extdata/EVE_plot.png)
