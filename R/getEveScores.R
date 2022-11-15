@@ -103,7 +103,7 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
     varAaCol <- which(colnames(variants) == "varAa")
 
     # loop through the variant data
-    for (i in 1:nrow(variantData)) {
+    for (i in seq(len=nrow(variantData))) {
       mut <- variantData[i, ]
       pos <- as.character(mut$resPos) # get position where to put the score
 
@@ -154,7 +154,7 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
     resPos <- c("numeric", nrow(variantData))
 
     #construct the alternative allele for each variant
-    for (i in 1:nrow(variantData)) {
+    for (i in seq(len=nrow(variantData))) {
       converted <- constructAltSeq(refData = uniqueGenomicCoords,
                                    ntPos = ntPosAndGenomicCoord[i, ]$ntPos,
                                    genomicCoord = ntPosAndGenomicCoord[i, ]$genomicCoord,
@@ -183,7 +183,7 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
                                          "ALT" = "altCodons"))
 
     # get EVE score for variants
-    for (i in 1:nrow(variantData)) {
+    for (i in seq(len=nrow(variantData))) {
       mut <- mutatedVariantData[i, ]
       pos <- as.character(mut$resPos) # get position where to put the score
 

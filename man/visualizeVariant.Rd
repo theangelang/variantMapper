@@ -27,7 +27,7 @@ A lollipop graph showing the EVE score at each residue position.
 \description{
 A function that visualizes EVE scores of a variant at residue positions where
 EVE scores are possible.  Function will replace EVE scores of NaN values with 0.
-The colors assigned to EVE scorea represent pathogenicity with 1 as most
+The colors assigned to EVE scores represent pathogenicity with 1 as most
 pathogenic and 0 as benign.
 }
 \examples{
