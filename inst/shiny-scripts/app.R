@@ -36,6 +36,8 @@ ui <- fluidPage(
       tags$p("Upload a csv file containing single nucleotide variants (SNVs) for
              your chosen gene."),
 
+      # add checkbox about if in protein form
+
       # Horizontal line ----
       tags$hr(),
 
@@ -47,6 +49,7 @@ ui <- fluidPage(
       tags$p("Optionally, upload a second csv file containing single nucleotide
       variants (SNVs) for your chosen gene."),
 
+      # add checkbox about if in protein form
       # Horizontal line ----
       tags$hr(),
 
@@ -68,7 +71,7 @@ ui <- fluidPage(
       tabsetPanel(type = "tabs",
                   tabPanel("Variant 1", plotOutput("plot")),
                   tabPanel("Variant 2", verbatimTextOutput("summary")),
-                  tabPanel("Overlapped", tableOutput("table"))
+                  tabPanel("Overlapped", tableOutput("contents"))
       )
     )
   )
@@ -79,22 +82,44 @@ ui <- fluidPage(
 # Define server logic
 server <- function(input, output) {
 
+  # processedVar1Data <- reactive({
+  #   req(input$variant1)
+  #   variant1Data <- processVariantData(filePath = readRDS(input$variant1$datapath))
+  # })
+  # req(input$variant1)
+
+  # variant1Data <- processVariantData(filePath = readRDS(input$variant1$datapath))
+  # output$contents <- renderTable({
+  #   req(input$variant1)
+  #   variant1Processed <- processVariantData(filePath = input$variant1$datapath)
+  # })
+
+  output$plot <- renderPlot({
+    req(input$eveData)
+    req(input$variant1)
+    eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
+    variant1Processed <- processVariantData(filePath = input$variant1$datapath)
+    scoredVariant <- getEveScores(eveDataProcessed, variant1Processed, TRUE)
+    visualizeVariant(scoredVariant, "NRXN1")
+  })
+
+  # output$contents <- renderPlot({
+  #   visualizeVariant(eveData, "NRXN1", FALSE)
+  # })
+
   # output$contents <- renderTable({
   #
   #   # input$file1 will be NULL initially. After the user selects
   #   # and uploads a file, head of that data file by default,
   #   # or all rows if selected, will be shown.
   #
-  #   req(input$file1)
+  #   req(input$variant1)
   #
   #   # when reading semicolon separated files,
   #   # having a comma separator causes `read.csv` to error
   #   tryCatch(
   #     {
-  #       df <- read.csv(input$file1$datapath,
-  #                      header = input$header,
-  #                      sep = input$sep,
-  #                      quote = input$quote)
+  #       df <- read.csv(input$variant1$datapath)
   #     },
   #     error = function(e) {
   #       # return a safeError if a parsing error occurs
@@ -102,15 +127,9 @@ server <- function(input, output) {
   #     }
   #   )
   #
-  #   if(input$disp == "head") {
-  #     return(head(df))
-  #   }
-  #   else {
-  #     return(df)
-  #   }
+  #   return(df)
   #
   # })
-
 }
 
 
