@@ -80,8 +80,9 @@ scoreVariant <- function(eveScores, posWeights = rep(1/length(eveScores), length
   }
 
   # calculate the weighted mean
+  result <- stats::weighted.mean(eveScoresCopy, posWeightsCopy)
 
-  return(stats::weighted.mean(eveScoresCopy, posWeightsCopy))
+  return(result)
 
 }
 

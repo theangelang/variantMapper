@@ -215,6 +215,17 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
   }
 }
 
+# set global variables relating to values passed in as arguments to helper
+# functions as NULL
+
+ALT <- NULL
+POS <- NULL
+REF <- NULL
+eveScores <- NULL
+resPos <- NULL
+varAa <- NULL
+wtAa <- NULL
+
 #' Helper function to get unique wild type amino acids at each residue
 #' position.
 #'

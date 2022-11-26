@@ -18,7 +18,7 @@ of missense variants. However, there are challenges with using EVE’s
 data. If one wants to assign predicted pathogenicity scores (EVE scores)
 from EVE they must download the EVE data for that gene and manually find
 the mutations corresponding to their variants. This is especially
-challenging for single nucleotide variants (SNVs). varaintMapper makes
+challenging for single nucleotide variants (SNVs). variantMapper makes
 this process efficient and provides a visualization aspect to map
 variants to a gene. By making it easier to get a source of pathogenicity
 predictions for variants this can guide downstream analyses on which
@@ -41,7 +41,7 @@ To install the latest version of the package:
 ``` r
 require("devtools")
 devtools::install_github("theangelang/variantMapper", build_vignettes = TRUE)
-library("variantMapper)
+library("variantMapper")
 ```
 
 To run the shinyApp: Under construction

@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 
 ## Description
 
-The goal of variantMapper is to make variant pathogenicity predictions from the Evolutionary model of Variant Effect (EVE) more accessible allowing for one source of variant pathogenicity predictions to be easily accessed.  EVE is an unsupervised machine learning model shown to be accurate in its predictions and doesn't rely on knowledge of protein function.  It uses multiple sequence alignments to predict pathogenicity of missense variants.  However, there are challenges with using EVE's data.  If one wants to assign predicted pathogenicity scores (EVE scores) from EVE they must download the EVE data for that gene and manually find the mutations corresponding to their variants.  This is especially challenging for single nucleotide variants (SNVs).  varaintMapper makes this process efficient and provides a visualization aspect to map variants to a gene.  By making it easier to get a source of pathogenicity predictions for variants this can guide downstream analyses on which variants and regions of a gene to focus on saving both time and efforts.  This can also serve as one form of validation for related studies.  Currently, there are no tools to make the process of using data generated from EVE easy and efficient to use.  Additionally, EVE does not provide a visualization aspect for examining specific variants.
+The goal of variantMapper is to make variant pathogenicity predictions from the Evolutionary model of Variant Effect (EVE) more accessible allowing for one source of variant pathogenicity predictions to be easily accessed.  EVE is an unsupervised machine learning model shown to be accurate in its predictions and doesn't rely on knowledge of protein function.  It uses multiple sequence alignments to predict pathogenicity of missense variants.  However, there are challenges with using EVE's data.  If one wants to assign predicted pathogenicity scores (EVE scores) from EVE they must download the EVE data for that gene and manually find the mutations corresponding to their variants.  This is especially challenging for single nucleotide variants (SNVs).  variantMapper makes this process efficient and provides a visualization aspect to map variants to a gene.  By making it easier to get a source of pathogenicity predictions for variants this can guide downstream analyses on which variants and regions of a gene to focus on saving both time and efforts.  This can also serve as one form of validation for related studies.  Currently, there are no tools to make the process of using data generated from EVE easy and efficient to use.  Additionally, EVE does not provide a visualization aspect for examining specific variants.
 
 ```r
 R version 4.2.1 (2022-06-23)
@@ -34,7 +34,7 @@ To install the latest version of the package:
 ```r
 require("devtools")
 devtools::install_github("theangelang/variantMapper", build_vignettes = TRUE)
-library("variantMapper)
+library("variantMapper")
 ```
 
 To run the shinyApp: Under construction
