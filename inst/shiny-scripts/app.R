@@ -9,6 +9,8 @@ ui <- fluidPage(
   # App title ----
   titlePanel("Score and visualize a variant's EVE scores"),
 
+  # TODO: Add description about EVE and overall app
+
   # Sidebar layout with input and output definitions ----
   sidebarLayout(
 
@@ -41,7 +43,7 @@ ui <- fluidPage(
              your chosen gene."),
 
       # Input: Select protein or genomic form ----
-      radioButtons("form1", "Form of variant 1' data",
+      radioButtons("form1", "Form of variant 1's data",
                    choices = c("Protein" = TRUE,
                                "Genomic" = FALSE),
                    selected = character(0)),
@@ -92,7 +94,14 @@ ui <- fluidPage(
       # Output: Tabset w/ variant 1 plot, variant 2 plot, and two variants
       # overlapped ----
       tabsetPanel(type = "tabs",
-                  tabPanel("Variant 1", plotOutput("variantPlot1"), uiOutput("sliderValues1")),
+                  tabPanel("Variant 1",
+                           plotOutput("variantPlot1"),
+                           uiOutput("sliderValues1"),
+                           h4("Average EVE score"),
+                           textOutput("averageEveScore1"),
+                           h4("Variant 1's information"),
+                           tableOutput("variant1Data")
+                           ),
                   tabPanel("Variant 2", plotOutput("variantPlot2"), uiOutput("sliderValues2")),
                   tabPanel("Overlapped", plotOutput("multiVariantPlot"), uiOutput("sliderValues3"))
       )
@@ -141,13 +150,13 @@ server <- function(input, output) {
   })
   output$sliderValues3 <- renderUI({
     req(input$eveData)
-    req(input$variant1)
-    req(input$form1)
+    req(input$variant2)
+    req(input$form2)
     eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
-    variant1Processed <- processVariantData(filePath = input$variant1$datapath, as.logical(input$form1))
-    scoredVariant1 <- getEveScores(eveDataProcessed, variant1Processed, as.logical(input$form1))
-    firstRes <- min(scoredVariant1[, "resPos"])
-    lastRes <- max(scoredVariant1[, "resPos"])
+    variant2Processed <- processVariantData(filePath = input$variant2$datapath, as.logical(input$form2))
+    scoredVariant2 <- getEveScores(eveDataProcessed, variant2Processed, as.logical(input$form2))
+    firstRes <- min(scoredVariant2[, "resPos"])
+    lastRes <- max(scoredVariant2[, "resPos"])
     sliderInput("numRes3", "Protein residue range", value = c(firstRes, lastRes), min = firstRes, max = lastRes)
   })
   output$variantPlot1 <- renderPlot({
@@ -189,6 +198,31 @@ server <- function(input, output) {
     filteredScoredVariant1 <- dplyr::filter(scoredVariant1, resPos >= input$numRes3[1] & resPos <= input$numRes3[2])
     filteredScoredVariant2 <- dplyr::filter(scoredVariant2, resPos >= input$numRes3[1] & resPos <= input$numRes3[2])
     visualizeVariant2(filteredScoredVariant1, filteredScoredVariant2, input$geneName)
+  })
+
+  output$averageEveScore1 <- renderText({
+    req(input$eveData)
+    req(input$variant1)
+    req(input$form1)
+    req(input$geneName)
+    eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
+    variant1Processed <- processVariantData(filePath = input$variant1$datapath, as.logical(input$form1))
+    scoredVariant1 <- getEveScores(eveDataProcessed, variant1Processed, as.logical(input$form1))
+    filteredScoredVariant1 <- dplyr::filter(scoredVariant1, resPos >= input$numRes1[1] & resPos <= input$numRes1[2])
+    # header <- paste("Average EVE score from residue", input$numRes1[1], "to", input$numRes1[1], sep = " ")
+    # h4(header)
+    avgEveScore1 <- scoreVariant(filteredScoredVariant1$eveScores)
+  })
+
+  output$variant1Data <- renderTable({
+    req(input$eveData)
+    req(input$variant1)
+    req(input$form1)
+    req(input$geneName)
+    eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
+    variant1Processed <- processVariantData(filePath = input$variant1$datapath, as.logical(input$form1))
+    scoredVariant1 <- getEveScores(eveDataProcessed, variant1Processed, as.logical(input$form1))
+    filteredScoredVariant1 <- dplyr::filter(scoredVariant1, resPos >= input$numRes1[1] & resPos <= input$numRes1[2])
   })
 
   # output$contents <- renderTable({
