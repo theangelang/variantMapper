@@ -65,7 +65,10 @@ ui <- fluidPage(
       radioButtons("form2", "Form of variant 2's data",
                    choices = c("Protein" = TRUE,
                                "Genomic" = FALSE),
-                   selected = character(0))
+                   selected = character(0)),
+
+      actionButton(inputId = "button1",
+                   label = "Run")
     ),
 
 
@@ -94,6 +97,13 @@ ui <- fluidPage(
       # Output: Tabset w/ variant 1 plot, variant 2 plot, and two variants
       # overlapped ----
       tabsetPanel(type = "tabs",
+                  tabPanel("About/Help",
+                           tags$h3("Welcome to variantMapper's Shiny app!"),
+                           tags$p("This Shiny app aims to make .... with EVE
+                                  data easier"),
+                           tags$h3("Instructions"),
+                           tags$p("To use this Shiny app...")
+                           ),
                   tabPanel("Variant 1",
                            plotOutput("variantPlot1"),
                            uiOutput("sliderValues1"),
@@ -114,18 +124,10 @@ ui <- fluidPage(
 # Define server logic
 server <- function(input, output) {
 
-  print(input)
-  # processedVar1Data <- reactive({
-  #   req(input$variant1)
-  #   variant1Data <- processVariantData(filePath = readRDS(input$variant1$datapath))
-  # })
-  # req(input$variant1)
+  # change so that uses eventReactive and will only display if it is there
 
-  # variant1Data <- processVariantData(filePath = readRDS(input$variant1$datapath))
-  # output$contents <- renderTable({
-  #   req(input$variant1)
-  #   variant1Processed <- processVariantData(filePath = input$variant1$datapath)
-  # })
+  print(input)
+
   output$sliderValues1 <- renderUI({
     req(input$eveData)
     req(input$variant1)
@@ -224,32 +226,7 @@ server <- function(input, output) {
     scoredVariant1 <- getEveScores(eveDataProcessed, variant1Processed, as.logical(input$form1))
     filteredScoredVariant1 <- dplyr::filter(scoredVariant1, resPos >= input$numRes1[1] & resPos <= input$numRes1[2])
   })
-
-  # output$contents <- renderTable({
-  #
-  #   # input$file1 will be NULL initially. After the user selects
-  #   # and uploads a file, head of that data file by default,
-  #   # or all rows if selected, will be shown.
-  #
-  #   req(input$variant1)
-  #
-  #   # when reading semicolon separated files,
-  #   # having a comma separator causes `read.csv` to error
-  #   tryCatch(
-  #     {
-  #       df <- read.csv(input$variant1$datapath)
-  #     },
-  #     error = function(e) {
-  #       # return a safeError if a parsing error occurs
-  #       stop(safeError(e))
-  #     }
-  #   )
-  #
-  #   return(df)
-  #
-  # })
 }
-
 
 # Create Shiny app
 shiny::shinyApp(ui, server)
