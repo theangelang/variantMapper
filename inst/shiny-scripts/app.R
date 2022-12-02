@@ -8,7 +8,8 @@ ui <- fluidPage(
 
   # App title ----
   titlePanel("Score and visualize a variant's EVE scores"),
-  helpText("HI please see the about and instructions tab"),
+  helpText("For information about this Shiny app and how to use it, please see
+           the About/Help tab."),
 
   # TODO: Add description about EVE and overall app
 
@@ -28,6 +29,9 @@ ui <- fluidPage(
              interest can be found at https://evemodel.org/download/protein and
              searching for the gene."),
 
+      tags$p("For example data please see the About/Help tab for more
+             information."),
+
       textInput("geneName", "Gene name", placeholder = "Name of gene"),
 
       tags$p("Enter in the name of the gene of interest."),
@@ -43,13 +47,21 @@ ui <- fluidPage(
       tags$p("Upload a csv file containing single nucleotide variants (SNVs) for
              your chosen gene."),
 
+      tags$p("For example data and details about file format please see the
+             About/Help tab."),
+
       # Input: Select protein or genomic form ----
       radioButtons("form1", "Form of variant 1's data",
                    choices = c("Protein" = TRUE,
                                "Genomic" = FALSE),
                    selected = character(0)),
 
-      # TODO: Add blurb about what it means to be in protein and genomic form
+      tags$p("Protein form indicates the SNVs are listed as missense mutations
+      at particular resiude positions.  Genomic form has SNVs listed with their
+      genomic position and nucleotide changes.  The file types for 'Protein' and
+      'Genomic' form are different, please see the About/Help tab for more
+      information about file format and how to determine which type of file you
+      have."),
 
       # Horizontal line ----
       tags$hr(),
@@ -62,31 +74,25 @@ ui <- fluidPage(
       tags$p("Optionally, upload a second csv file containing single nucleotide
       variants (SNVs) for your chosen gene."),
 
+      tags$p("For example data and details about file format please see the
+             About/Help tab."),
+
       # Input: Select protein or genomic form ----
       radioButtons("form2", "Form of variant 2's data",
                    choices = c("Protein" = TRUE,
                                "Genomic" = FALSE),
                    selected = character(0)),
 
+      tags$p("Protein form indicates the SNVs are listed as missense mutations
+      at particular resiude positions.  Genomic form has SNVs listed with their
+      genomic position and nucleotide changes.  The file types for 'Protein' and
+      'Genomic' form are different, please see the About/Help tab for more
+      information about file format and how to determine which type of file you
+      have."),
+
       actionButton(inputId = "runCalculations",
                    label = "Run")
     ),
-
-
-      # TODO: Add blurb about what it means to be in protein and genomic form
-
-      # Horizontal line ----
-      # tags$hr(),
-      #
-      # # TODO: Change so its a slider to select gene range
-      # # Input: Slider for the number of observations to generate ----
-      # sliderInput("n",
-      #             "Number of observations:",
-      #             value = 500,
-      #             min = 1,
-      #             max = 1000)
-      #
-      # ),
 
 
     # Main panel for displaying outputs ----
@@ -100,10 +106,110 @@ ui <- fluidPage(
       tabsetPanel(type = "tabs",
                   tabPanel("About/Help",
                            tags$h3("Welcome to variantMapper's Shiny app!"),
-                           tags$p("This Shiny app aims to make .... with EVE
-                                  data easier"),
+                           tags$p("This Shiny app aims to make variant
+                                  pathogenicity predictions from the
+                                  Evolutionary model of Variant Effect (EVE)
+                                  more accessible allowing for one source of
+                                  variant pathogenicity predictions to be easily
+                                  accessed. EVE is an unsupervised machine
+                                  learning model shown to be accurate in its
+                                  predictions and doesn’t rely on knowledge of
+                                  protein function. It uses multiple sequence
+                                  alignments to predict pathogenicity of
+                                  missense variants. You can find out more about
+                                  EVE here (https://evemodel.org/).
+                                  With this Shiny app you will be able to
+                                  asign an EVE score to your variants of
+                                  interest and visualize their EVE scores by
+                                  residue position.  You can also compare two
+                                  variants of the same gene simultaneously on
+                                  one plot."),
+                           tags$h4("Variant 1 tab"),
+                           tags$p("The Variant 1 tab corresponds to analysis and
+                                  visualization from the data entered in the
+                                  Variant 1 section in the input panel on the
+                                  left."),
+                           tags$h4("Variant 2 tab"),
+                           tags$p("The Variant 2 tab corresponds to analysis and
+                                  visualization from the data entered in the
+                                  Variant 2 section in the input panel on the
+                                  left."),
+                           tags$h4("Overlapped tab"),
+                           tags$p("The Overlapped panel shows analysis and
+                                  visualizations of both variants
+                                  ssimultaneously."),
                            tags$h3("Instructions"),
-                           tags$p("To use this Shiny app...")
+
+                           tags$blockquote("Note, you do not have to upload two
+                                           sets of variant data in order to use
+                                           this Shiny app.  The minimum required
+                                           fields to use this Shiny app are
+                                           'EVE Data', 'Gene name', 'Variant 1
+                                           data', and 'Form of variant 1's
+                                           data'.  The second variant option
+                                           enables you to look at the EVE scores
+                                           for two variants separately and
+                                           overlapped onto the gene at one time.
+                                           "),
+                           tags$h4("To use this Shiny app to analyze one
+                                   variant:"),
+                           tags$ol(
+                             tags$li("Upload EVE Data."),
+                             tags$li("Enter Gene name."),
+                             tags$li("Upload csv file with SNVs."),
+                             tags$li("Select the form of variant 1's data i.e.
+                                     Protein or Genomic.")
+                           ),
+                           tags$h4("To use this Shiny app to analyze two
+                                  variants:"),
+                           tags$ol(
+                             tags$li("Do steps 1 to 4 in the above section for
+                                     analyzing one variant."),
+                             tags$li("Upload csv file with SNVs."),
+                             tags$li("Select the form of variant 2's data i.e.
+                                     Protein or Genomic.")
+                           ),
+                           tags$blockquote("Once all the fields are filled out
+                           the calculations will begin and you can navigate
+                           to the appropriate page.  If any of the fields
+                           in the side panel are changed the tabs will be
+                                           updated accordingly as well."),
+                           tags$h3("Example data"),
+                           tags$h4("EVE Data"),
+                           tags$p("EVE Data is a vcf file downloaded from
+                           (https://evemodel.org/).  A sample of what this file
+                           should look like is 'NRX1B_HUMAN_SUBSET.vcf'.  It can
+                           be found at
+                           (https://github.com/theangelang/variantMapper/tree/
+                           master/inst/extdata)."),
+                           tags$p("Please note this is a subset of NRXN1 and
+                           does not contain all the rows."),
+                           tags$h4("Protein form"),
+                           tags$p("Protein form is a csv file with three
+                           columns.The first being 'wt_aa' with the single amino
+                           acid code for the wild type amino acid.  The second
+                           is 'position' containing integers representing
+                           residue position.  The third column is 'mt_aa'which
+                           is the amino acid variant at this particular residue
+                           position.  It also contains the one letter amino acid
+                           code.  For an example please see
+                           'variant_data_protein.csv' at https://github.com
+                           /theangelang/variantMapper/tree/master/inst/extdata"
+                                  ),
+                           tags$h4("Genomic form"),
+                           tags$p("Genomic form is a csv file with five columns.
+                           The first being 'chrom' which are either integers or
+                           X or Y representing chromosome location.  The second
+                           being 'start' which has integers indicating start
+                           position of the SNV.  The third is 'end', containing
+                           integers representing the end position of the SNV.
+                           The fourth column is 'ref_allele' which has
+                           characters representing the wildtype nucleotide.
+                           The fifth column is 'alt_allele' which has characters
+                           representing the variant nucleotide.  For an example
+                           please see 'variant_data_genomic.csv' at
+                                  https://github.com/theangelang/variantMapper/
+                                  tree/master/inst/extdata")
                            ),
                   tabPanel("Variant 1",
                            uiOutput("variant1PlotTitle"),
@@ -162,8 +268,10 @@ server <- function(input, output, session) {
     req(input$geneName)
     # req(input$runCalculations)
     eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
-    variant1Processed <- processVariantData(filePath = input$variant1$datapath, as.logical(input$form1))
-    scoredVariant1 <- getEveScores(eveDataProcessed, variant1Processed, as.logical(input$form1))
+    variant1Processed <- processVariantData(filePath = input$variant1$datapath,
+                                            as.logical(input$form1))
+    scoredVariant1 <- getEveScores(eveDataProcessed, variant1Processed,
+                                   as.logical(input$form1))
     scoredVariant1
     # firstRes <- min(scoredVariant1[, "resPos"])
     # lastRes <- max(scoredVariant1[, "resPos"])
@@ -174,7 +282,7 @@ server <- function(input, output, session) {
     variant1Data <- variant1Calculation()
     firstRes <- min(variant1Data[, "resPos"])
     lastRes <- max(variant1Data[, "resPos"])
-    return(c(firstRes, lastRes))
+    c(firstRes, lastRes)
   })
 
   output$sliderValues1 <- renderUI({
@@ -195,12 +303,15 @@ server <- function(input, output, session) {
     req(input$numRes1)
     scoredVariant1 <- variant1Calculation()
     filteredScoredVariant1 <- dplyr::filter(scoredVariant1,
-                                            resPos >= input$numRes1[1] & resPos <= input$numRes1[2])
+                                            resPos >= input$numRes1[1] &
+                                              resPos <= input$numRes1[2])
   })
 
   output$variant1PlotTitle <- renderUI({
     if ((! is.null(variant1Calculation())) & (! is.null(variant1Filtering))){
-      header <- paste("Plot of EVE score vs residue position for", input$geneName, sep = " ")
+      header <- paste("Plot of EVE score vs residue position for",
+                      input$geneName,
+                      sep = " ")
       h4(header)
     }
   })
@@ -215,7 +326,13 @@ server <- function(input, output, session) {
   output$averageScore1Title <- renderUI({
     if ((! is.null(variant1Calculation())) & (! is.null(variant1Filtering))){
       h4("Average EVE score")
-      header <- paste("Average EVE score from residue", input$numRes1[1], "to", input$numRes1[2], "for", input$geneName, sep = " ")
+      header <- paste("Average EVE score from residue",
+                      input$numRes1[1],
+                      "to",
+                      input$numRes1[2],
+                      "for",
+                      input$geneName,
+                      sep = " ")
       h4(header)
     }
   })
@@ -229,7 +346,10 @@ server <- function(input, output, session) {
 
   output$variant1TableTitle <- renderUI({
     if ((! is.null(variant1Calculation())) & (! is.null(variant1Filtering))){
-      header <- paste("Variant 1 of ", input$geneName, "'s EVE score and amino acid information", sep = "")
+      header <- paste("Variant 1 of ",
+                      input$geneName,
+                      "'s EVE score and amino acid information",
+                      sep = "")
       h4(header)
     }
   })
@@ -256,8 +376,11 @@ server <- function(input, output, session) {
     req(input$geneName)
     # req(input$runCalculations)
     eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
-    variant2Processed <- processVariantData(filePath = input$variant2$datapath, as.logical(input$form2))
-    scoredVariant2 <- getEveScores(eveDataProcessed, variant2Processed, as.logical(input$form2))
+    variant2Processed <- processVariantData(filePath = input$variant2$datapath,
+                                            as.logical(input$form2))
+    scoredVariant2 <- getEveScores(eveDataProcessed,
+                                   variant2Processed,
+                                   as.logical(input$form2))
     scoredVariant2
     # firstRes <- min(scoredVariant1[, "resPos"])
     # lastRes <- max(scoredVariant1[, "resPos"])
@@ -289,13 +412,16 @@ server <- function(input, output, session) {
     req(input$numRes2)
     scoredVariant2 <- variant2Calculation()
     filteredScoredVariant2 <- dplyr::filter(scoredVariant2,
-                                            resPos >= input$numRes2[1] & resPos <= input$numRes2[2])
+                                            resPos >= input$numRes2[1] &
+                                              resPos <= input$numRes2[2])
   })
 
   # maybe don't need
   output$variant2PlotTitle <- renderUI({
     if ((! is.null(variant2Calculation())) & (! is.null(variant2Filtering))){
-      header <- paste("Plot of EVE score vs residue position for", input$geneName, sep = " ")
+      header <- paste("Plot of EVE score vs residue position for",
+                      input$geneName,
+                      sep = " ")
       h4(header)
     }
   })
@@ -310,7 +436,13 @@ server <- function(input, output, session) {
   output$averageScore2Title <- renderUI({
     if ((! is.null(variant2Calculation())) & (! is.null(variant2Filtering))){
       h4("Average EVE score")
-      header <- paste("Average EVE score from residue", input$numRes2[1], "to", input$numRes2[2], "for", input$geneName, sep = " ")
+      header <- paste("Average EVE score from residue",
+                      input$numRes2[1],
+                      "to",
+                      input$numRes2[2],
+                      "for",
+                      input$geneName,
+                      sep = " ")
       h4(header)
     }
   })
@@ -324,7 +456,10 @@ server <- function(input, output, session) {
 
   output$variant2TableTitle <- renderUI({
     if ((! is.null(variant2Calculation())) & (! is.null(variant2Filtering))){
-      header <- paste("Variant 2 of ", input$geneName, "'s EVE score and amino acid information", sep = "")
+      header <- paste("Variant 2 of ",
+                      input$geneName,
+                      "'s EVE score and amino acid information",
+                      sep = "")
       h4(header)
     }
   })
@@ -375,7 +510,8 @@ server <- function(input, output, session) {
     req(input$numResMulti)
     scoredVariant1 <- variant1Calculation()
     filteredScoredVariant1Multi <- dplyr::filter(scoredVariant1,
-                                                 resPos >= input$numResMulti[1] & resPos <= input$numResMulti[2])
+                                                 resPos >= input$numResMulti[1] &
+                                                   resPos <= input$numResMulti[2])
   })
 
   variant2FilteringMulti <- reactive({
@@ -383,14 +519,17 @@ server <- function(input, output, session) {
     req(input$numResMulti)
     scoredVariant2 <- variant2Calculation()
     filteredScoredVariant2Multi <- dplyr::filter(scoredVariant2,
-                                            resPos >= input$numResMulti[1] & resPos <= input$numResMulti[2])
+                                            resPos >= input$numResMulti[1] &
+                                              resPos <= input$numResMulti[2])
   })
 
   # maybe don't need
   output$variantMultiPlotTitle <- renderUI({
     if ((! is.null(variant1Calculation())) & (! is.null(variant1FilteringMulti)) &
         (! is.null(variant2Calculation())) & (! is.null(variant2FilteringMulti))){
-      header <- paste("Plot of EVE score vs residue position for Variant 1 and Variant 2 of", input$geneName, sep = " ")
+      header <- paste("Plot of EVE score vs residue position for Variant 1 and Variant 2 of",
+                      input$geneName,
+                      sep = " ")
       h4(header)
     }
   })
@@ -400,8 +539,9 @@ server <- function(input, output, session) {
         (! is.null(variant2Calculation())) & (! is.null(variant2FilteringMulti))){
       filteredVariant1Data <- variant1FilteringMulti()
       filteredVariant2Data <- variant2FilteringMulti()
-      visualizeVariant2(filteredVariant1Data, filteredVariant2Data, input$geneName)
-      #
+      visualizeVariant2(filteredVariant1Data,
+                        filteredVariant2Data,
+                        input$geneName)
     }
   })
 
@@ -409,7 +549,13 @@ server <- function(input, output, session) {
     if ((! is.null(variant1Calculation())) & (! is.null(variant1FilteringMulti)) &
         (! is.null(variant2Calculation())) & (! is.null(variant2FilteringMulti))){
       h4("Average EVE score")
-      header <- paste("Average EVE score from residue", input$numRes2[1], "to", input$numRes2[2], "for", input$geneName, sep = " ")
+      header <- paste("Average EVE score from residue",
+                      input$numRes2[1],
+                      "to",
+                      input$numRes2[2],
+                      "for",
+                      input$geneName,
+                      sep = " ")
       h4(header)
     }
   })
@@ -433,7 +579,10 @@ server <- function(input, output, session) {
   output$variantMultiTableTitle <- renderUI({
     if ((! is.null(variant1Calculation())) & (! is.null(variant1FilteringMulti)) &
         (! is.null(variant2Calculation())) & (! is.null(variant2FilteringMulti))){
-      header <- paste("Variants 1 and 2 of ", input$geneName, "'s EVE score and amino acid information", sep = "")
+      header <- paste("Variants 1 and 2 of ",
+                      input$geneName,
+                      "'s EVE score and amino acid information",
+                      sep = "")
       h4(header)
     }
   })
