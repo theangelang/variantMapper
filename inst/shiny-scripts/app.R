@@ -125,16 +125,35 @@ ui <- fluidPage(
                            uiOutput("variant2TableDesc"),
                            tableOutput("variant2Data")
                           ),
-                  tabPanel("Overlapped", plotOutput("multiVariantPlot"), uiOutput("sliderValues3"))
+                  tabPanel("Overlapped",
+                           uiOutput("variantMultiPlotTitle"),
+                           plotOutput("variantPlotMulti"),
+                           uiOutput("sliderValuesMulti"),
+                           uiOutput("averageScoreMultiTitle"),
+                           # have 2 columns here, add more labels
+                           fluidRow(column(6,
+                                           textOutput("averageEveScoreMulti1")),
+                                    column(6,
+                                           textOutput("averageEveScoreMulti2"))),
+                           uiOutput("variantMultiTableTitle"),
+                           uiOutput("variantMultiTableDesc"),
+                           # have 2 columns here, add more labels
+                           fluidRow(column(6,
+                                           tableOutput("variant1MultiData")),
+                                    column(6,
+                                           tableOutput("variant2MultiData")))
+                  )
       )
     )
   )
 )
 
 
-# TODO: Add reactive
+# TODO: Add reactive and logic for using button
 # Define server logic
 server <- function(input, output, session) {
+
+  #----------- For the Variant 1 tab
 
   variant1Calculation <- reactive({
     req(input$eveData)
@@ -228,6 +247,8 @@ server <- function(input, output, session) {
     }
   })
 
+  #----------- For the Variant 2 tab
+
   variant2Calculation <- reactive({
     req(input$eveData)
     req(input$variant2)
@@ -320,6 +341,126 @@ server <- function(input, output, session) {
       filteredVariant2Data
     }
   })
+
+  #----------- For the overlap tab
+
+  # sliderMultiCalculation <- reactive({
+  #   # req(input$runCalculations)
+  #   variant2Data <- variant2Calculation()
+  #   firstRes <- min(variant2Data[, "resPos"])
+  #   lastRes <- max(variant2Data[, "resPos"])
+  #   return(c(firstRes, lastRes))
+  # })
+
+  output$sliderValuesMulti <- renderUI({
+    # variant1Data <- variant1Calculation()
+    # firstRes <- min(variant1Data[, "resPos"])
+    # lastRes <- max(variant1Data[, "resPos"])
+    # req(input$runCalculations)
+    # use values from variant 2 since need both variants for this page
+
+    if ((! is.null(variant1Calculation())) & (! is.null(variant1FilteringMulti)) &
+        (! is.null(variant2Calculation())) & (! is.null(variant2FilteringMulti))){
+      slider2Values <- slider2Calculation()
+      print(slider2Values)
+      sliderInput("numResMulti",
+                "Protein residue range",
+                value = c(slider2Values[[1]], slider2Values[[2]]),
+                min = slider2Values[[1]], max = slider2Values[[2]])
+    }
+  })
+
+  variant1FilteringMulti <- reactive({
+    # req(input$runCalculations)
+    req(input$numResMulti)
+    scoredVariant1 <- variant1Calculation()
+    filteredScoredVariant1Multi <- dplyr::filter(scoredVariant1,
+                                                 resPos >= input$numResMulti[1] & resPos <= input$numResMulti[2])
+  })
+
+  variant2FilteringMulti <- reactive({
+    # req(input$runCalculations)
+    req(input$numResMulti)
+    scoredVariant2 <- variant2Calculation()
+    filteredScoredVariant2Multi <- dplyr::filter(scoredVariant2,
+                                            resPos >= input$numResMulti[1] & resPos <= input$numResMulti[2])
+  })
+
+  # maybe don't need
+  output$variantMultiPlotTitle <- renderUI({
+    if ((! is.null(variant1Calculation())) & (! is.null(variant1FilteringMulti)) &
+        (! is.null(variant2Calculation())) & (! is.null(variant2FilteringMulti))){
+      header <- paste("Plot of EVE score vs residue position for Variant 1 and Variant 2 of", input$geneName, sep = " ")
+      h4(header)
+    }
+  })
+
+  output$variantPlotMulti <- renderPlot({
+    if ((! is.null(variant1Calculation())) & (! is.null(variant1FilteringMulti)) &
+        (! is.null(variant2Calculation())) & (! is.null(variant2FilteringMulti))){
+      filteredVariant1Data <- variant1FilteringMulti()
+      filteredVariant2Data <- variant2FilteringMulti()
+      visualizeVariant2(filteredVariant1Data, filteredVariant2Data, input$geneName)
+      #
+    }
+  })
+
+  output$averageScoreMultiTitle <- renderUI({
+    if ((! is.null(variant1Calculation())) & (! is.null(variant1FilteringMulti)) &
+        (! is.null(variant2Calculation())) & (! is.null(variant2FilteringMulti))){
+      h4("Average EVE score")
+      header <- paste("Average EVE score from residue", input$numRes2[1], "to", input$numRes2[2], "for", input$geneName, sep = " ")
+      h4(header)
+    }
+  })
+
+  output$averageEveScoreMulti2 <- renderText({
+    if ((! is.null(variant1Calculation())) & (! is.null(variant1FilteringMulti)) &
+        (! is.null(variant2Calculation())) & (! is.null(variant2FilteringMulti))){
+      filteredVariant2Data <- variant2FilteringMulti()
+      scoreVariant(filteredVariant2Data$eveScores)
+    }
+  })
+
+  output$averageEveScoreMulti1 <- renderText({
+    if ((! is.null(variant1Calculation())) & (! is.null(variant1FilteringMulti)) &
+        (! is.null(variant2Calculation())) & (! is.null(variant2FilteringMulti))){
+      filteredVariant1Data <- variant1FilteringMulti()
+      scoreVariant(filteredVariant1Data$eveScores)
+    }
+  })
+
+  output$variantMultiTableTitle <- renderUI({
+    if ((! is.null(variant1Calculation())) & (! is.null(variant1FilteringMulti)) &
+        (! is.null(variant2Calculation())) & (! is.null(variant2FilteringMulti))){
+      header <- paste("Variants 1 and 2 of ", input$geneName, "'s EVE score and amino acid information", sep = "")
+      h4(header)
+    }
+  })
+
+  output$variantMultiTableDesc <- renderUI({
+    if ((! is.null(variant1Calculation())) & (! is.null(variant1FilteringMulti)) &
+        (! is.null(variant2Calculation())) & (! is.null(variant2FilteringMulti))){
+      p("The columns...")
+    }
+  })
+
+  output$variant1MultiData <- renderTable({
+    if ((! is.null(variant1Calculation())) & (! is.null(variant1FilteringMulti)) &
+        (! is.null(variant2Calculation())) & (! is.null(variant2FilteringMulti))){
+      filteredVariant1Data <- variant1FilteringMulti()
+      filteredVariant1Data
+    }
+  })
+
+  output$variant2MultiData <- renderTable({
+    if ((! is.null(variant1Calculation())) & (! is.null(variant1FilteringMulti)) &
+        (! is.null(variant2Calculation())) & (! is.null(variant2FilteringMulti))){
+      filteredVariant2Data <- variant2FilteringMulti()
+      filteredVariant2Data
+    }
+  })
+
 
 
   print(input)
