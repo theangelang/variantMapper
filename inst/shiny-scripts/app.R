@@ -8,6 +8,7 @@ ui <- fluidPage(
 
   # App title ----
   titlePanel("Score and visualize a variant's EVE scores"),
+  helpText("HI please see the about and instructions tab"),
 
   # TODO: Add description about EVE and overall app
 
@@ -67,7 +68,7 @@ ui <- fluidPage(
                                "Genomic" = FALSE),
                    selected = character(0)),
 
-      actionButton(inputId = "button1",
+      actionButton(inputId = "runCalculations",
                    label = "Run")
     ),
 
@@ -105,14 +106,25 @@ ui <- fluidPage(
                            tags$p("To use this Shiny app...")
                            ),
                   tabPanel("Variant 1",
+                           uiOutput("variant1PlotTitle"),
                            plotOutput("variantPlot1"),
                            uiOutput("sliderValues1"),
-                           h4("Average EVE score"),
+                           uiOutput("averageScore1Title"),
                            textOutput("averageEveScore1"),
-                           h4("Variant 1's information"),
+                           uiOutput("variant1TableTitle"),
+                           uiOutput("variant1TableDesc"),
                            tableOutput("variant1Data")
                            ),
-                  tabPanel("Variant 2", plotOutput("variantPlot2"), uiOutput("sliderValues2")),
+                  tabPanel("Variant 2",
+                           uiOutput("variant2PlotTitle"),
+                           plotOutput("variantPlot2"),
+                           uiOutput("sliderValues2"),
+                           uiOutput("averageScore2Title"),
+                           textOutput("averageEveScore2"),
+                           uiOutput("variant2TableTitle"),
+                           uiOutput("variant2TableDesc"),
+                           tableOutput("variant2Data")
+                          ),
                   tabPanel("Overlapped", plotOutput("multiVariantPlot"), uiOutput("sliderValues3"))
       )
     )
@@ -122,110 +134,294 @@ ui <- fluidPage(
 
 # TODO: Add reactive
 # Define server logic
-server <- function(input, output) {
+server <- function(input, output, session) {
 
-  # change so that uses eventReactive and will only display if it is there
+  variant1Calculation <- reactive({
+    req(input$eveData)
+    req(input$variant1)
+    req(input$form1)
+    req(input$geneName)
+    # req(input$runCalculations)
+    eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
+    variant1Processed <- processVariantData(filePath = input$variant1$datapath, as.logical(input$form1))
+    scoredVariant1 <- getEveScores(eveDataProcessed, variant1Processed, as.logical(input$form1))
+    scoredVariant1
+    # firstRes <- min(scoredVariant1[, "resPos"])
+    # lastRes <- max(scoredVariant1[, "resPos"])
+  })
 
-  print(input)
+  slider1Calculation <- reactive({
+    # req(input$runCalculations)
+    variant1Data <- variant1Calculation()
+    firstRes <- min(variant1Data[, "resPos"])
+    lastRes <- max(variant1Data[, "resPos"])
+    return(c(firstRes, lastRes))
+  })
 
   output$sliderValues1 <- renderUI({
-    req(input$eveData)
-    req(input$variant1)
-    req(input$form1)
-    eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
-    variant1Processed <- processVariantData(filePath = input$variant1$datapath, as.logical(input$form1))
-    scoredVariant1 <- getEveScores(eveDataProcessed, variant1Processed, as.logical(input$form1))
-    firstRes <- min(scoredVariant1[, "resPos"])
-    lastRes <- max(scoredVariant1[, "resPos"])
-    sliderInput("numRes1", "Protein residue range", value = c(firstRes, lastRes), min = firstRes, max = lastRes)
+    # variant1Data <- variant1Calculation()
+    # firstRes <- min(variant1Data[, "resPos"])
+    # lastRes <- max(variant1Data[, "resPos"])
+    # req(input$runCalculations)
+    slider1Values <- slider1Calculation()
+    print(slider1Values)
+    sliderInput("numRes1",
+                "Protein residue range",
+                value = c(slider1Values[[1]], slider1Values[[2]]),
+                min = slider1Values[[1]], max = slider1Values[[2]])
+    })
+
+  variant1Filtering <- reactive({
+    # req(input$runCalculations)
+    req(input$numRes1)
+    scoredVariant1 <- variant1Calculation()
+    filteredScoredVariant1 <- dplyr::filter(scoredVariant1,
+                                            resPos >= input$numRes1[1] & resPos <= input$numRes1[2])
   })
-  output$sliderValues2 <- renderUI({
-    req(input$eveData)
-    req(input$variant2)
-    req(input$form2)
-    eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
-    variant2Processed <- processVariantData(filePath = input$variant2$datapath, as.logical(input$form2))
-    scoredVariant2 <- getEveScores(eveDataProcessed, variant2Processed, as.logical(input$form2))
-    firstRes <- min(scoredVariant2[, "resPos"])
-    lastRes <- max(scoredVariant2[, "resPos"])
-    sliderInput("numRes2", "Protein residue range", value = c(firstRes, lastRes), min = firstRes, max = lastRes)
+
+  output$variant1PlotTitle <- renderUI({
+    if ((! is.null(variant1Calculation())) & (! is.null(variant1Filtering))){
+      header <- paste("Plot of EVE score vs residue position for", input$geneName, sep = " ")
+      h4(header)
+    }
   })
-  output$sliderValues3 <- renderUI({
-    req(input$eveData)
-    req(input$variant2)
-    req(input$form2)
-    eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
-    variant2Processed <- processVariantData(filePath = input$variant2$datapath, as.logical(input$form2))
-    scoredVariant2 <- getEveScores(eveDataProcessed, variant2Processed, as.logical(input$form2))
-    firstRes <- min(scoredVariant2[, "resPos"])
-    lastRes <- max(scoredVariant2[, "resPos"])
-    sliderInput("numRes3", "Protein residue range", value = c(firstRes, lastRes), min = firstRes, max = lastRes)
-  })
+
   output$variantPlot1 <- renderPlot({
-    req(input$eveData)
-    req(input$variant1)
-    req(input$form1)
-    req(input$geneName)
-    eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
-    variant1Processed <- processVariantData(filePath = input$variant1$datapath, as.logical(input$form1))
-    scoredVariant1 <- getEveScores(eveDataProcessed, variant1Processed, as.logical(input$form1))
-    filteredScoredVariant1 <- dplyr::filter(scoredVariant1, resPos >= input$numRes1[1] & resPos <= input$numRes1[2])
-    visualizeVariant(filteredScoredVariant1, input$geneName)
+    # req(input$runCalculations)
+    variant1Data <- variant1Calculation()
+    filteredVariant1Data <- variant1Filtering()
+    visualizeVariant(filteredVariant1Data, input$geneName)
   })
 
-  output$variantPlot2 <- renderPlot({
-    req(input$eveData)
-    req(input$variant2)
-    req(input$form2)
-    req(input$geneName)
-    eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
-    variant2Processed <- processVariantData(filePath = input$variant2$datapath, as.logical(input$form2))
-    scoredVariant2 <- getEveScores(eveDataProcessed, variant2Processed, as.logical(input$form2))
-    filteredScoredVariant2 <- dplyr::filter(scoredVariant2, resPos >= input$numRes2[1] & resPos <= input$numRes2[2])
-    visualizeVariant(filteredScoredVariant2, input$geneName)
-  })
-
-  output$multiVariantPlot <- renderPlot({
-    req(input$eveData)
-    req(input$variant1)
-    req(input$form1)
-    req(input$variant2)
-    req(input$form2)
-    req(input$geneName)
-    eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
-    variant1Processed <- processVariantData(filePath = input$variant1$datapath, as.logical(input$form1))
-    scoredVariant1 <- getEveScores(eveDataProcessed, variant1Processed, as.logical(input$form1))
-    variant2Processed <- processVariantData(filePath = input$variant2$datapath, as.logical(input$form2))
-    scoredVariant2 <- getEveScores(eveDataProcessed, variant2Processed, as.logical(input$form2))
-    filteredScoredVariant1 <- dplyr::filter(scoredVariant1, resPos >= input$numRes3[1] & resPos <= input$numRes3[2])
-    filteredScoredVariant2 <- dplyr::filter(scoredVariant2, resPos >= input$numRes3[1] & resPos <= input$numRes3[2])
-    visualizeVariant2(filteredScoredVariant1, filteredScoredVariant2, input$geneName)
+  output$averageScore1Title <- renderUI({
+    if ((! is.null(variant1Calculation())) & (! is.null(variant1Filtering))){
+      h4("Average EVE score")
+      header <- paste("Average EVE score from residue", input$numRes1[1], "to", input$numRes1[2], "for", input$geneName, sep = " ")
+      h4(header)
+    }
   })
 
   output$averageEveScore1 <- renderText({
-    req(input$eveData)
-    req(input$variant1)
-    req(input$form1)
-    req(input$geneName)
-    eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
-    variant1Processed <- processVariantData(filePath = input$variant1$datapath, as.logical(input$form1))
-    scoredVariant1 <- getEveScores(eveDataProcessed, variant1Processed, as.logical(input$form1))
-    filteredScoredVariant1 <- dplyr::filter(scoredVariant1, resPos >= input$numRes1[1] & resPos <= input$numRes1[2])
-    # header <- paste("Average EVE score from residue", input$numRes1[1], "to", input$numRes1[1], sep = " ")
-    # h4(header)
-    avgEveScore1 <- scoreVariant(filteredScoredVariant1$eveScores)
+    if ((! is.null(variant1Calculation())) & (! is.null(variant1Filtering))){
+      filteredVariant1Data <- variant1Filtering()
+      scoreVariant(filteredVariant1Data$eveScores)
+    }
+  })
+
+  output$variant1TableTitle <- renderUI({
+    if ((! is.null(variant1Calculation())) & (! is.null(variant1Filtering))){
+      header <- paste("Variant 1 of ", input$geneName, "'s EVE score and amino acid information", sep = "")
+      h4(header)
+    }
+  })
+
+  output$variant1TableDesc <- renderUI({
+    if ((! is.null(variant1Calculation())) & (! is.null(variant1Filtering))){
+      p("The columns...")
+    }
   })
 
   output$variant1Data <- renderTable({
-    req(input$eveData)
-    req(input$variant1)
-    req(input$form1)
-    req(input$geneName)
-    eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
-    variant1Processed <- processVariantData(filePath = input$variant1$datapath, as.logical(input$form1))
-    scoredVariant1 <- getEveScores(eveDataProcessed, variant1Processed, as.logical(input$form1))
-    filteredScoredVariant1 <- dplyr::filter(scoredVariant1, resPos >= input$numRes1[1] & resPos <= input$numRes1[2])
+    if ((! is.null(variant1Calculation())) & (! is.null(variant1Filtering))){
+      filteredVariant1Data <- variant1Filtering()
+      filteredVariant1Data
+    }
   })
+
+  variant2Calculation <- reactive({
+    req(input$eveData)
+    req(input$variant2)
+    req(input$form2)
+    req(input$geneName)
+    # req(input$runCalculations)
+    eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
+    variant2Processed <- processVariantData(filePath = input$variant2$datapath, as.logical(input$form2))
+    scoredVariant2 <- getEveScores(eveDataProcessed, variant2Processed, as.logical(input$form2))
+    scoredVariant2
+    # firstRes <- min(scoredVariant1[, "resPos"])
+    # lastRes <- max(scoredVariant1[, "resPos"])
+  })
+
+  slider2Calculation <- reactive({
+    # req(input$runCalculations)
+    variant2Data <- variant2Calculation()
+    firstRes <- min(variant2Data[, "resPos"])
+    lastRes <- max(variant2Data[, "resPos"])
+    return(c(firstRes, lastRes))
+  })
+
+  output$sliderValues2 <- renderUI({
+    # variant1Data <- variant1Calculation()
+    # firstRes <- min(variant1Data[, "resPos"])
+    # lastRes <- max(variant1Data[, "resPos"])
+    # req(input$runCalculations)
+    slider2Values <- slider2Calculation()
+    print(slider2Values)
+    sliderInput("numRes2",
+                "Protein residue range",
+                value = c(slider2Values[[1]], slider2Values[[2]]),
+                min = slider2Values[[1]], max = slider2Values[[2]])
+  })
+
+  variant2Filtering <- reactive({
+    # req(input$runCalculations)
+    req(input$numRes2)
+    scoredVariant2 <- variant2Calculation()
+    filteredScoredVariant2 <- dplyr::filter(scoredVariant2,
+                                            resPos >= input$numRes2[1] & resPos <= input$numRes2[2])
+  })
+
+  # maybe don't need
+  output$variant2PlotTitle <- renderUI({
+    if ((! is.null(variant2Calculation())) & (! is.null(variant2Filtering))){
+      header <- paste("Plot of EVE score vs residue position for", input$geneName, sep = " ")
+      h4(header)
+    }
+  })
+
+  output$variantPlot2 <- renderPlot({
+    # req(input$runCalculations)
+    variant2Data <- variant2Calculation()
+    filteredVariant2Data <- variant2Filtering()
+    visualizeVariant(filteredVariant2Data, input$geneName)
+  })
+
+  output$averageScore2Title <- renderUI({
+    if ((! is.null(variant2Calculation())) & (! is.null(variant2Filtering))){
+      h4("Average EVE score")
+      header <- paste("Average EVE score from residue", input$numRes2[1], "to", input$numRes2[2], "for", input$geneName, sep = " ")
+      h4(header)
+    }
+  })
+
+  output$averageEveScore2 <- renderText({
+    if ((! is.null(variant2Calculation())) & (! is.null(variant2Filtering))){
+      filteredVariant2Data <- variant2Filtering()
+      scoreVariant(filteredVariant2Data$eveScores)
+    }
+  })
+
+  output$variant2TableTitle <- renderUI({
+    if ((! is.null(variant2Calculation())) & (! is.null(variant2Filtering))){
+      header <- paste("Variant 2 of ", input$geneName, "'s EVE score and amino acid information", sep = "")
+      h4(header)
+    }
+  })
+
+  output$variant2TableDesc <- renderUI({
+    if ((! is.null(variant1Calculation())) & (! is.null(variant1Filtering))){
+      p("The columns...")
+    }
+  })
+
+  output$variant2Data <- renderTable({
+    if ((! is.null(variant2Calculation())) & (! is.null(variant2Filtering))){
+      filteredVariant2Data <- variant2Filtering()
+      filteredVariant2Data
+    }
+  })
+
+
+  print(input)
+
+  # output$sliderValues1 <- renderUI({
+  #   req(input$eveData)
+  #   req(input$variant1)
+  #   req(input$form1)
+  #   eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
+  #   variant1Processed <- processVariantData(filePath = input$variant1$datapath, as.logical(input$form1))
+  #   scoredVariant1 <- getEveScores(eveDataProcessed, variant1Processed, as.logical(input$form1))
+  #   firstRes <- min(scoredVariant1[, "resPos"])
+  #   lastRes <- max(scoredVariant1[, "resPos"])
+  #   sliderInput("numRes1", "Protein residue range", value = c(firstRes, lastRes), min = firstRes, max = lastRes)
+  # })
+  # output$sliderValues2 <- renderUI({
+  #   req(input$eveData)
+  #   req(input$variant2)
+  #   req(input$form2)
+  #   eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
+  #   variant2Processed <- processVariantData(filePath = input$variant2$datapath, as.logical(input$form2))
+  #   scoredVariant2 <- getEveScores(eveDataProcessed, variant2Processed, as.logical(input$form2))
+  #   firstRes <- min(scoredVariant2[, "resPos"])
+  #   lastRes <- max(scoredVariant2[, "resPos"])
+  #   sliderInput("numRes2", "Protein residue range", value = c(firstRes, lastRes), min = firstRes, max = lastRes)
+  # })
+  # output$sliderValues3 <- renderUI({
+  #   req(input$eveData)
+  #   req(input$variant2)
+  #   req(input$form2)
+  #   eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
+  #   variant2Processed <- processVariantData(filePath = input$variant2$datapath, as.logical(input$form2))
+  #   scoredVariant2 <- getEveScores(eveDataProcessed, variant2Processed, as.logical(input$form2))
+  #   firstRes <- min(scoredVariant2[, "resPos"])
+  #   lastRes <- max(scoredVariant2[, "resPos"])
+  #   sliderInput("numRes3", "Protein residue range", value = c(firstRes, lastRes), min = firstRes, max = lastRes)
+  # })
+  # output$variantPlot1 <- renderPlot({
+  #   req(input$eveData)
+  #   req(input$variant1)
+  #   req(input$form1)
+  #   req(input$geneName)
+  #   eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
+  #   variant1Processed <- processVariantData(filePath = input$variant1$datapath, as.logical(input$form1))
+  #   scoredVariant1 <- getEveScores(eveDataProcessed, variant1Processed, as.logical(input$form1))
+  #   filteredScoredVariant1 <- dplyr::filter(scoredVariant1, resPos >= input$numRes1[1] & resPos <= input$numRes1[2])
+  #   visualizeVariant(filteredScoredVariant1, input$geneName)
+  # })
+  #
+  # output$variantPlot2 <- renderPlot({
+  #   req(input$eveData)
+  #   req(input$variant2)
+  #   req(input$form2)
+  #   req(input$geneName)
+  #   eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
+  #   variant2Processed <- processVariantData(filePath = input$variant2$datapath, as.logical(input$form2))
+  #   scoredVariant2 <- getEveScores(eveDataProcessed, variant2Processed, as.logical(input$form2))
+  #   filteredScoredVariant2 <- dplyr::filter(scoredVariant2, resPos >= input$numRes2[1] & resPos <= input$numRes2[2])
+  #   visualizeVariant(filteredScoredVariant2, input$geneName)
+  # })
+  #
+  # output$multiVariantPlot <- renderPlot({
+  #   req(input$eveData)
+  #   req(input$variant1)
+  #   req(input$form1)
+  #   req(input$variant2)
+  #   req(input$form2)
+  #   req(input$geneName)
+  #   eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
+  #   variant1Processed <- processVariantData(filePath = input$variant1$datapath, as.logical(input$form1))
+  #   scoredVariant1 <- getEveScores(eveDataProcessed, variant1Processed, as.logical(input$form1))
+  #   variant2Processed <- processVariantData(filePath = input$variant2$datapath, as.logical(input$form2))
+  #   scoredVariant2 <- getEveScores(eveDataProcessed, variant2Processed, as.logical(input$form2))
+  #   filteredScoredVariant1 <- dplyr::filter(scoredVariant1, resPos >= input$numRes3[1] & resPos <= input$numRes3[2])
+  #   filteredScoredVariant2 <- dplyr::filter(scoredVariant2, resPos >= input$numRes3[1] & resPos <= input$numRes3[2])
+  #   visualizeVariant2(filteredScoredVariant1, filteredScoredVariant2, input$geneName)
+  # })
+  #
+  # output$averageEveScore1 <- renderText({
+  #   req(input$eveData)
+  #   req(input$variant1)
+  #   req(input$form1)
+  #   req(input$geneName)
+  #   eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
+  #   variant1Processed <- processVariantData(filePath = input$variant1$datapath, as.logical(input$form1))
+  #   scoredVariant1 <- getEveScores(eveDataProcessed, variant1Processed, as.logical(input$form1))
+  #   filteredScoredVariant1 <- dplyr::filter(scoredVariant1, resPos >= input$numRes1[1] & resPos <= input$numRes1[2])
+  #   # header <- paste("Average EVE score from residue", input$numRes1[1], "to", input$numRes1[1], sep = " ")
+  #   # h4(header)
+  #   avgEveScore1 <- scoreVariant(filteredScoredVariant1$eveScores)
+  # })
+  #
+  # output$variant1Data <- renderTable({
+  #   req(input$eveData)
+  #   req(input$variant1)
+  #   req(input$form1)
+  #   req(input$geneName)
+  #   eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
+  #   variant1Processed <- processVariantData(filePath = input$variant1$datapath, as.logical(input$form1))
+  #   scoredVariant1 <- getEveScores(eveDataProcessed, variant1Processed, as.logical(input$form1))
+  #   filteredScoredVariant1 <- dplyr::filter(scoredVariant1, resPos >= input$numRes1[1] & resPos <= input$numRes1[2])
+  # })
 }
 
 # Create Shiny app
