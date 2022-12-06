@@ -23,9 +23,9 @@ this process efficient and provides a visualization aspect to map
 variants to a gene. By making it easier to get a source of pathogenicity
 predictions for variants this can guide downstream analyses on which
 variants and regions of a gene to focus on saving both time and efforts.
-This can also serve as one form of validation for related studies.
-Currently, there are no tools to make the process of using data
-generated from EVE easy and efficient to use. Additionally, EVE does not
+Additionally, it can serve as one form of validation for related
+studies. Currently, there are no tools to make the process of using data
+generated from EVE easy and efficient to use. Moreover, EVE does not
 provide a visualization aspect for examining specific variants.
 
 ``` r
@@ -44,7 +44,11 @@ devtools::install_github("theangelang/variantMapper", build_vignettes = TRUE)
 library("variantMapper")
 ```
 
-To run the shinyApp: Under construction
+To run the shinyApp:
+
+``` r
+runVariantMapper()
+```
 
 ## Overview
 
@@ -54,7 +58,8 @@ browseVignettes("variantMapper")
 ```
 
 variantMapper contains six functions that aid in the process of using
-data from EVE, analyzing, and visualizing variants.
+data from EVE, analyzing, and visualizing variants. There is one
+function to run a Shiny app.
 
 The `processEveData` function processes the data from EVE and ensures it
 is in the proper form for use in the future. The user must go to the
@@ -82,6 +87,9 @@ lollipop graph.
 
 The `visualizeVariant2` function plots the EVE scores at each position
 for two variants in one lollipop graph.
+
+The `runVariantMapper` function runs the Shiny App that allows users to
+do analysis and visualization of variants via a web interface.
 
 An overview of the package is shown below:
 ![](./inst/extdata/variantMapper_overview.png)
@@ -140,6 +148,14 @@ appropriate form and manipulating it. Additionally, I used aspects of
 the `ggplot2` package to map two variants’ EVE scores to the residue
 position.
 
+### `runVariantMapper` function
+
+The RStudio Shiny Gallery and RStudio Shiny Reference were used to
+create the widgets in the Shiny app. My contributions to the Shiny app
+were creating the layout, choosing the widgets, and the logic and
+functionality which includes integration of other `variantMapper`
+functions.
+
 ## References
 
 1.  R Core Team (2022). R: A language and environment for statistical
@@ -177,6 +193,20 @@ position.
 
 9.  Holtz, Y. Lollipop plot. <https://r-graph-gallery.com/lollipop-plot>
     (2018).
+
+10. Chang W, Cheng J, Allaire J, Sievert C, Schloerke B, Xie Y, Allen J,
+    McPherson J, Dipert A, Borges B (2022). *shiny: Web Application
+    Framework for R*. R package version 1.7.3,
+    <https://CRAN.R-project.org/package=shiny>.
+
+11. *File Upload*. (2022). RStudio Shiny Gallery,
+    <https://shiny.rstudio.com/gallery/file-upload.html>
+
+12. *Tabsets*. (2022). RStudio Shiny Gallery,
+    <https://shiny.rstudio.com/gallery/tabsets.html>
+
+13. *Function reference*. (2022). RStudio Shiny,
+    <https://shiny.rstudio.com/reference/shiny/1.7.3/>
 
 ## Acknowledgements
 

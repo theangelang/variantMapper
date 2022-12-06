@@ -13,9 +13,15 @@ vignette: >
 ---
 ## Introduction
 
-variantMapper is an R package designed to make it easier to annotate variants with an EVE score from EVE.  This EVE score represents the predicted pathogenicity of a missense mutation at that position determined by the unsupervised learning model, EVE.  EVE has been shown to have high accuracy at predictions of pathogenicity.  However, if one wants to use EVE's data as a source of validation of pathogenicity with other evidence or use it to filter which variants or locations of a gene to focus on they are not able to easily do so.  It requires manually downlaoding the file and finding the appropriate score if it exists.
+### Evolutionary model of Variant Effect (EVE)
 
-variantMapper makes this process easier and more efficient by annotating the variants of interest with an EVE score.  Additionally, it is able to provide a weighted average EVE score for a variant of a gene, representing on average the pathogenicity of residues scored while taking into account different regions of a gene are more important for gene function.  variantMapper also provides the ability to visually map variants to a gene and compare two variants of a single gene at once.
+Evolutionary model of Variant Effect (EVE) is an unsupervised machine learning model that predicts the pathogenicity of missense variants.  EVE learns from multiple sequence alignments and does not require the knowledge of protein function.  It assigns an EVE score that represents the predicted pathogenicity.  The score uses a continuous scale from zero to one with zero being benign and one being most pathogenic.  EVE has been shown to have high accuracy in predictions of pathogenicity.  To learn more about EVE please visit https://evemodel.org/
+
+### variantMapper Overview
+
+variantMapper is an R package designed to make it easier to annotate variants with an EVE score.  This EVE score represents the predicted pathogenicity of a missense mutation at that sepcific position determined by the unsupervised learning model, EVE.  Scores are from a continuous interval of zero to one with zero being benign and one being most pathogenic.  However, if one wants to use EVE's data as a source of validation of pathogenicity with other evidence or use it to filter which variants or locations of a gene to focus on they are not able to easily do so.  It requires manually downlaoding the file and finding the appropriate score if it exists.
+
+variantMapper makes this process easier and more efficient by annotating the variants of interest with an EVE score.  Additionally, it is able to provide a weighted average EVE score for a variant of a gene, representing on average the pathogenicity of residues scored while taking into account different regions of a gene that are more important for gene function.  variantMapper also provides the ability to visually map variants to a gene and compare two variants of a single gene at once.
 
 ```{r setup, eval=TRUE, message=FALSE}
 require("devtools")
@@ -77,7 +83,7 @@ weightedAvgEveScore
 
 Now that we have assigned EVE scores to our variants let's plot these EVE scores.  We can also specify whether we only want to examine EVE scores greater than zero, but we will keep them here.
 ```{r, warning=FALSE}
-variantPlotProt <- visualizeVariant(eveScoresProt, aboveZeroOnly = FALSE)
+variantPlotProt <- visualizeVariant(eveScoresProt, "NRXN1", aboveZeroOnly = FALSE)
 variantPlotProt
 ```
 
@@ -89,15 +95,27 @@ variantPlotGen
 Next, let's compare the variants together.
 
 ```{r, warning=FALSE}
-compareVariantsPlot <- visualizeVariant2(eveScoresProt, eveScoresGen, "NRXN1", aboveZeroOnly = FALSE)
+compareVariantsPlot <- visualizeVariant2(eveScoresProt, 
+                                         eveScoresGen, 
+                                         "NRXN1", 
+                                         aboveZeroOnly = FALSE)
 compareVariantsPlot
 ```
 
 Finally, let's take a look when we remove those with EVE scores of 0 (benign).
 
 ```{r, warning=FALSE}
-compareVariantsPlotNonZero <- visualizeVariant2(eveScoresProt, eveScoresGen, "NRXN1", aboveZeroOnly = TRUE)
+compareVariantsPlotNonZero <- visualizeVariant2(eveScoresProt, 
+                                                eveScoresGen, 
+                                                "NRXN1", 
+                                                aboveZeroOnly = TRUE)
 compareVariantsPlotNonZero
+```
+
+If you prefer to use variantMapper's functionalities in a web interface you may run the Shiny app.  Functionality in the Shiny app include annotating variants of interest, getting the average EVE score for a variant, and plotting variants.
+
+```{r, eval = FALSE}
+# runVariantMapper()
 ```
 
 Session Info:

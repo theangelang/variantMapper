@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 
 ## Description
 
-The goal of variantMapper is to make variant pathogenicity predictions from the Evolutionary model of Variant Effect (EVE) more accessible allowing for one source of variant pathogenicity predictions to be easily accessed.  EVE is an unsupervised machine learning model shown to be accurate in its predictions and doesn't rely on knowledge of protein function.  It uses multiple sequence alignments to predict pathogenicity of missense variants.  However, there are challenges with using EVE's data.  If one wants to assign predicted pathogenicity scores (EVE scores) from EVE they must download the EVE data for that gene and manually find the mutations corresponding to their variants.  This is especially challenging for single nucleotide variants (SNVs).  variantMapper makes this process efficient and provides a visualization aspect to map variants to a gene.  By making it easier to get a source of pathogenicity predictions for variants this can guide downstream analyses on which variants and regions of a gene to focus on saving both time and efforts.  This can also serve as one form of validation for related studies.  Currently, there are no tools to make the process of using data generated from EVE easy and efficient to use.  Additionally, EVE does not provide a visualization aspect for examining specific variants.
+The goal of variantMapper is to make variant pathogenicity predictions from the Evolutionary model of Variant Effect (EVE) more accessible allowing for one source of variant pathogenicity predictions to be easily accessed.  EVE is an unsupervised machine learning model shown to be accurate in its predictions and doesn't rely on knowledge of protein function.  It uses multiple sequence alignments to predict pathogenicity of missense variants.  However, there are challenges with using EVE's data.  If one wants to assign predicted pathogenicity scores (EVE scores) from EVE they must download the EVE data for that gene and manually find the mutations corresponding to their variants.  This is especially challenging for single nucleotide variants (SNVs).  variantMapper makes this process efficient and provides a visualization aspect to map variants to a gene.  By making it easier to get a source of pathogenicity predictions for variants this can guide downstream analyses on which variants and regions of a gene to focus on saving both time and efforts.  Additionally, it can serve as one form of validation for related studies.  Currently, there are no tools to make the process of using data generated from EVE easy and efficient to use.  Moreover, EVE does not provide a visualization aspect for examining specific variants.
 
 ```r
 R version 4.2.1 (2022-06-23)
@@ -37,7 +37,11 @@ devtools::install_github("theangelang/variantMapper", build_vignettes = TRUE)
 library("variantMapper")
 ```
 
-To run the shinyApp: Under construction
+To run the shinyApp:
+
+```r
+runVariantMapper()
+```
 
 ## Overview
 
@@ -46,7 +50,7 @@ ls("package:variantMapper")
 browseVignettes("variantMapper")
 ```
 
-variantMapper contains six functions that aid in the process of using data from EVE, analyzing, and visualizing variants.
+variantMapper contains six functions that aid in the process of using data from EVE, analyzing, and visualizing variants.  There is one function to run a Shiny app.
 
 The `processEveData` function processes the data from EVE and ensures it is in the proper form for use in the future.  The user must go to the [EVE website](https://evemodel.org/), search for their gene of choice and download the vcf file.
 
@@ -59,6 +63,8 @@ The `scoreVariant` function returns a weighted average EVE score for the variant
 The `visualizeVariant` function plots the EVE scores at each reside as a lollipop graph.
 
 The `visualizeVariant2` function plots the EVE scores at each position for two variants in one lollipop graph.
+
+The `runVariantMapper` function runs the Shiny App that allows users to do analysis and visualization of variants via a web interface.
 
 An overview of the package is shown below:
 ![](./inst/extdata/variantMapper_overview.png)
@@ -83,6 +89,9 @@ The `weighted.mean` function from the `stats` package and `hasArg` function from
 
 ### `visualizeVariant2` function
 `ggplot2` was used to create the plot.  `dplyr` was used for data manipulation.  My contributions were ensuring the data was of the appropriate form and manipulating it.  Additionally, I used aspects of the `ggplot2` package to map two variants’ EVE scores to the residue position.
+
+### `runVariantMapper` function
+The RStudio Shiny Gallery and RStudio Shiny Reference were used to create the widgets in the Shiny app.  My contributions to the Shiny app were creating the layout, choosing the widgets, and the logic and functionality which includes integration of other `variantMapper` functions.
 
 ## References
 
@@ -111,6 +120,16 @@ The `weighted.mean` function from the `stats` package and `hasArg` function from
 8. Frazer, J. et al. Disease variant prediction with deep generative models of evolutionary data. Nature. 599. 91-95 (2021).
 
 9. Holtz, Y. Lollipop plot. https://r-graph-gallery.com/lollipop-plot (2018).
+
+10. Chang W, Cheng J, Allaire J, Sievert C, Schloerke B, Xie Y, Allen J, McPherson J, Dipert
+  A, Borges B (2022). _shiny: Web Application Framework for R_. R package version 1.7.3,
+  <https://CRAN.R-project.org/package=shiny>.
+  
+11. _File Upload_. (2022). RStudio Shiny Gallery, <https://shiny.rstudio.com/gallery/file-upload.html>
+
+12. _Tabsets_. (2022). RStudio Shiny Gallery, <https://shiny.rstudio.com/gallery/tabsets.html>
+
+13. _Function reference_. (2022). RStudio Shiny, <https://shiny.rstudio.com/reference/shiny/1.7.3/> 
   
 ## Acknowledgements
 
