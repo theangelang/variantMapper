@@ -210,10 +210,8 @@ ui <- fluidPage(
                            uiOutput("variant1PlotTitle"),
                            plotOutput("variantPlot1"),
                            uiOutput("sliderValues1"),
-                           uiOutput("averageScore1Title"),
-                           textOutput("averageEveScore1"),
-                           uiOutput("variant1TableTitle"),
-                           uiOutput("variant1TableDesc"),
+                           uiOutput("averageEveScore1"),
+                           uiOutput("variant1TableTitleDesc"),
                            tableOutput("variant1Data")
                            ),
                   # Variant 2 tab ----
@@ -221,10 +219,8 @@ ui <- fluidPage(
                            uiOutput("variant2PlotTitle"),
                            plotOutput("variantPlot2"),
                            uiOutput("sliderValues2"),
-                           uiOutput("averageScore2Title"),
-                           textOutput("averageEveScore2"),
-                           uiOutput("variant2TableTitle"),
-                           uiOutput("variant2TableDesc"),
+                           uiOutput("averageEveScore2"),
+                           uiOutput("variant2TableTitleDesc"),
                            tableOutput("variant2Data")
                           ),
                   # Variant 1 and 2 displayed simultaneously tab ----
@@ -233,14 +229,15 @@ ui <- fluidPage(
                            plotOutput("variantPlotMulti"),
                            uiOutput("sliderValuesMulti"),
                            uiOutput("averageScoreMultiTitle"),
-                           # have 2 columns here, add more labels
                            fluidRow(column(6,
-                                           textOutput("averageEveScoreMulti1")),
+                                           uiOutput("averageEveScoreMulti1")),
                                     column(6,
-                                           textOutput("averageEveScoreMulti2"))),
-                           uiOutput("variantMultiTableTitle"),
-                           uiOutput("variantMultiTableDesc"),
-                           # have 2 columns here, add more labels
+                                           uiOutput("averageEveScoreMulti2"))),
+                           uiOutput("variantMultiTableTitleDesc"),
+                           fluidRow(column(6,
+                                           uiOutput("variant1MultiTableTitle")),
+                                    column(6,
+                                           uiOutput("variant2MultiTableTitle"))),
                            fluidRow(column(6,
                                            tableOutput("variant1MultiData")),
                                     column(6,
@@ -287,7 +284,6 @@ server <- function(input, output, session) {
     # req(input$runCalculations)
     if (! is.null(slider1Calculation)) {
       slider1Values <- slider1Calculation()
-      print(slider1Values)
       sliderInput("numRes1",
                   "Protein residue range",
                   value = c(slider1Values[[1]], slider1Values[[2]]),
@@ -322,9 +318,9 @@ server <- function(input, output, session) {
     }
   })
 
-  output$averageScore1Title <- renderUI({
+  output$averageEveScore1 <- renderUI({
     if ((! is.null(variant1Calculation())) & (! is.null(variant1Filtering))){
-      h4("Average EVE score")
+      filteredVariant1Data <- variant1Filtering()
       header <- paste("Average EVE score from residue",
                       input$numRes1[1],
                       "to",
@@ -332,30 +328,21 @@ server <- function(input, output, session) {
                       "for",
                       input$geneName,
                       sep = " ")
-      h4(header)
+      tagList(
+        tags$h4(header),
+        scoreVariant(filteredVariant1Data$eveScores)
+      )
     }
   })
 
-  output$averageEveScore1 <- renderText({
-    if ((! is.null(variant1Calculation())) & (! is.null(variant1Filtering))){
-      filteredVariant1Data <- variant1Filtering()
-      scoreVariant(filteredVariant1Data$eveScores)
-    }
-  })
-
-  output$variant1TableTitle <- renderUI({
+  output$variant1TableTitleDesc <- renderUI({
     if ((! is.null(variant1Calculation())) & (! is.null(variant1Filtering))){
       header <- paste("Variant 1 of ",
                       input$geneName,
                       "'s EVE score and amino acid information",
                       sep = "")
-      h4(header)
-    }
-  })
-
-  output$variant1TableDesc <- renderUI({
-    if ((! is.null(variant1Calculation())) & (! is.null(variant1Filtering))){
       tagList(
+        tags$h4(header),
         tags$p("Below is a description of column titles:"),
         tags$ul(
           tags$li("eveScores: The EVE score of the amino acid at this residue
@@ -404,12 +391,8 @@ server <- function(input, output, session) {
   })
 
   output$sliderValues2 <- renderUI({
-    # variant1Data <- variant1Calculation()
-    # firstRes <- min(variant1Data[, "resPos"])
-    # lastRes <- max(variant1Data[, "resPos"])
     # req(input$runCalculations)
     slider2Values <- slider2Calculation()
-    print(slider2Values)
     sliderInput("numRes2",
                 "Protein residue range",
                 value = c(slider2Values[[1]], slider2Values[[2]]),
@@ -442,9 +425,9 @@ server <- function(input, output, session) {
     visualizeVariant(filteredVariant2Data, input$geneName)
   })
 
-  output$averageScore2Title <- renderUI({
+  output$averageEveScore2 <- renderUI({
     if ((! is.null(variant2Calculation())) & (! is.null(variant2Filtering))){
-      h4("Average EVE score")
+      filteredVariant2Data <- variant2Filtering()
       header <- paste("Average EVE score from residue",
                       input$numRes2[1],
                       "to",
@@ -452,30 +435,21 @@ server <- function(input, output, session) {
                       "for",
                       input$geneName,
                       sep = " ")
-      h4(header)
+      tagList(
+        tags$h4(header),
+        scoreVariant(filteredVariant2Data$eveScores)
+      )
     }
   })
 
-  output$averageEveScore2 <- renderText({
-    if ((! is.null(variant2Calculation())) & (! is.null(variant2Filtering))){
-      filteredVariant2Data <- variant2Filtering()
-      scoreVariant(filteredVariant2Data$eveScores)
-    }
-  })
-
-  output$variant2TableTitle <- renderUI({
+  output$variant2TableTitleDesc <- renderUI({
     if ((! is.null(variant2Calculation())) & (! is.null(variant2Filtering))){
       header <- paste("Variant 2 of ",
                       input$geneName,
                       "'s EVE score and amino acid information",
                       sep = "")
-      h4(header)
-    }
-  })
-
-  output$variant2TableDesc <- renderUI({
-    if ((! is.null(variant2Calculation())) & (! is.null(variant2Filtering))){
       tagList(
+        tags$h4(header),
         tags$p("Below is a description of column titles:"),
         tags$ul(
           tags$li("eveScores: The EVE score of the amino acid at this residue
@@ -516,7 +490,6 @@ server <- function(input, output, session) {
     if ((! is.null(variant1Calculation())) & (! is.null(variant1FilteringMulti)) &
         (! is.null(variant2Calculation())) & (! is.null(variant2FilteringMulti))){
       slider2Values <- slider2Calculation()
-      print(slider2Values)
       sliderInput("numResMulti",
                 "Protein residue range",
                 value = c(slider2Values[[1]], slider2Values[[2]]),
@@ -579,39 +552,64 @@ server <- function(input, output, session) {
     }
   })
 
-  output$averageEveScoreMulti2 <- renderText({
+  output$averageEveScoreMulti2 <- renderUI({
     if ((! is.null(variant1Calculation())) & (! is.null(variant1FilteringMulti)) &
         (! is.null(variant2Calculation())) & (! is.null(variant2FilteringMulti))){
       filteredVariant2Data <- variant2FilteringMulti()
-      scoreVariant(filteredVariant2Data$eveScores)
+      tagList(
+        tags$h5("Variant 2"),
+        scoreVariant(filteredVariant2Data$eveScores)
+      )
     }
   })
 
-  output$averageEveScoreMulti1 <- renderText({
+  output$averageEveScoreMulti1 <- renderUI({
     if ((! is.null(variant1Calculation())) & (! is.null(variant1FilteringMulti)) &
         (! is.null(variant2Calculation())) & (! is.null(variant2FilteringMulti))){
       filteredVariant1Data <- variant1FilteringMulti()
-      scoreVariant(filteredVariant1Data$eveScores)
+      tagList(
+        tags$h5("Variant 1"),
+        scoreVariant(filteredVariant1Data$eveScores)
+      )
     }
   })
 
-  output$variantMultiTableTitle <- renderUI({
+  output$variantMultiTableTitleDesc <- renderUI({
     if ((! is.null(variant1Calculation())) & (! is.null(variant1FilteringMulti)) &
         (! is.null(variant2Calculation())) & (! is.null(variant2FilteringMulti))){
       header <- paste("Variants 1 and 2 of ",
                       input$geneName,
                       "'s EVE score and amino acid information",
                       sep = "")
-      h4(header)
+      tagList(
+        h4(header),
+        tags$p("Below is a description of column titles:"),
+        tags$ul(
+          tags$li("eveScores: The EVE score of the amino acid at this residue
+                  position in the variant."),
+          tags$li("resPos: The residue position."),
+          tags$li("wtAa: The wildtype amino acid at this residue position."),
+          tags$li("varPos: The variant amino acid at this residue position in
+                  the protein variant.")
+        )
+      )
     }
   })
 
-  output$variantMultiTableDesc <- renderUI({
+  output$variant1MultiTableTitle <- renderUI({
     if ((! is.null(variant1Calculation())) & (! is.null(variant1FilteringMulti)) &
         (! is.null(variant2Calculation())) & (! is.null(variant2FilteringMulti))){
-      p("The columns...")
+      tags$h5("Variant 1")
     }
   })
+
+  output$variant2MultiTableTitle <- renderUI({
+    if ((! is.null(variant1Calculation())) & (! is.null(variant1FilteringMulti)) &
+        (! is.null(variant2Calculation())) & (! is.null(variant2FilteringMulti))){
+      tags$h5("Variant 2")
+    }
+  })
+
 
   output$variant1MultiData <- renderTable({
     if ((! is.null(variant1Calculation())) & (! is.null(variant1FilteringMulti)) &
@@ -629,108 +627,6 @@ server <- function(input, output, session) {
     }
   })
 
-
-
-  print(input)
-
-  # output$sliderValues1 <- renderUI({
-  #   req(input$eveData)
-  #   req(input$variant1)
-  #   req(input$form1)
-  #   eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
-  #   variant1Processed <- processVariantData(filePath = input$variant1$datapath, as.logical(input$form1))
-  #   scoredVariant1 <- getEveScores(eveDataProcessed, variant1Processed, as.logical(input$form1))
-  #   firstRes <- min(scoredVariant1[, "resPos"])
-  #   lastRes <- max(scoredVariant1[, "resPos"])
-  #   sliderInput("numRes1", "Protein residue range", value = c(firstRes, lastRes), min = firstRes, max = lastRes)
-  # })
-  # output$sliderValues2 <- renderUI({
-  #   req(input$eveData)
-  #   req(input$variant2)
-  #   req(input$form2)
-  #   eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
-  #   variant2Processed <- processVariantData(filePath = input$variant2$datapath, as.logical(input$form2))
-  #   scoredVariant2 <- getEveScores(eveDataProcessed, variant2Processed, as.logical(input$form2))
-  #   firstRes <- min(scoredVariant2[, "resPos"])
-  #   lastRes <- max(scoredVariant2[, "resPos"])
-  #   sliderInput("numRes2", "Protein residue range", value = c(firstRes, lastRes), min = firstRes, max = lastRes)
-  # })
-  # output$sliderValues3 <- renderUI({
-  #   req(input$eveData)
-  #   req(input$variant2)
-  #   req(input$form2)
-  #   eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
-  #   variant2Processed <- processVariantData(filePath = input$variant2$datapath, as.logical(input$form2))
-  #   scoredVariant2 <- getEveScores(eveDataProcessed, variant2Processed, as.logical(input$form2))
-  #   firstRes <- min(scoredVariant2[, "resPos"])
-  #   lastRes <- max(scoredVariant2[, "resPos"])
-  #   sliderInput("numRes3", "Protein residue range", value = c(firstRes, lastRes), min = firstRes, max = lastRes)
-  # })
-  # output$variantPlot1 <- renderPlot({
-  #   req(input$eveData)
-  #   req(input$variant1)
-  #   req(input$form1)
-  #   req(input$geneName)
-  #   eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
-  #   variant1Processed <- processVariantData(filePath = input$variant1$datapath, as.logical(input$form1))
-  #   scoredVariant1 <- getEveScores(eveDataProcessed, variant1Processed, as.logical(input$form1))
-  #   filteredScoredVariant1 <- dplyr::filter(scoredVariant1, resPos >= input$numRes1[1] & resPos <= input$numRes1[2])
-  #   visualizeVariant(filteredScoredVariant1, input$geneName)
-  # })
-  #
-  # output$variantPlot2 <- renderPlot({
-  #   req(input$eveData)
-  #   req(input$variant2)
-  #   req(input$form2)
-  #   req(input$geneName)
-  #   eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
-  #   variant2Processed <- processVariantData(filePath = input$variant2$datapath, as.logical(input$form2))
-  #   scoredVariant2 <- getEveScores(eveDataProcessed, variant2Processed, as.logical(input$form2))
-  #   filteredScoredVariant2 <- dplyr::filter(scoredVariant2, resPos >= input$numRes2[1] & resPos <= input$numRes2[2])
-  #   visualizeVariant(filteredScoredVariant2, input$geneName)
-  # })
-  #
-  # output$multiVariantPlot <- renderPlot({
-  #   req(input$eveData)
-  #   req(input$variant1)
-  #   req(input$form1)
-  #   req(input$variant2)
-  #   req(input$form2)
-  #   req(input$geneName)
-  #   eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
-  #   variant1Processed <- processVariantData(filePath = input$variant1$datapath, as.logical(input$form1))
-  #   scoredVariant1 <- getEveScores(eveDataProcessed, variant1Processed, as.logical(input$form1))
-  #   variant2Processed <- processVariantData(filePath = input$variant2$datapath, as.logical(input$form2))
-  #   scoredVariant2 <- getEveScores(eveDataProcessed, variant2Processed, as.logical(input$form2))
-  #   filteredScoredVariant1 <- dplyr::filter(scoredVariant1, resPos >= input$numRes3[1] & resPos <= input$numRes3[2])
-  #   filteredScoredVariant2 <- dplyr::filter(scoredVariant2, resPos >= input$numRes3[1] & resPos <= input$numRes3[2])
-  #   visualizeVariant2(filteredScoredVariant1, filteredScoredVariant2, input$geneName)
-  # })
-  #
-  # output$averageEveScore1 <- renderText({
-  #   req(input$eveData)
-  #   req(input$variant1)
-  #   req(input$form1)
-  #   req(input$geneName)
-  #   eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
-  #   variant1Processed <- processVariantData(filePath = input$variant1$datapath, as.logical(input$form1))
-  #   scoredVariant1 <- getEveScores(eveDataProcessed, variant1Processed, as.logical(input$form1))
-  #   filteredScoredVariant1 <- dplyr::filter(scoredVariant1, resPos >= input$numRes1[1] & resPos <= input$numRes1[2])
-  #   # header <- paste("Average EVE score from residue", input$numRes1[1], "to", input$numRes1[1], sep = " ")
-  #   # h4(header)
-  #   avgEveScore1 <- scoreVariant(filteredScoredVariant1$eveScores)
-  # })
-  #
-  # output$variant1Data <- renderTable({
-  #   req(input$eveData)
-  #   req(input$variant1)
-  #   req(input$form1)
-  #   req(input$geneName)
-  #   eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
-  #   variant1Processed <- processVariantData(filePath = input$variant1$datapath, as.logical(input$form1))
-  #   scoredVariant1 <- getEveScores(eveDataProcessed, variant1Processed, as.logical(input$form1))
-  #   filteredScoredVariant1 <- dplyr::filter(scoredVariant1, resPos >= input$numRes1[1] & resPos <= input$numRes1[2])
-  # })
 }
 
 # Create Shiny app
