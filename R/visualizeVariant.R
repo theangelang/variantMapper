@@ -84,11 +84,13 @@ visualizeVariant <- function(eveInfo, geneName = "X", aboveZeroOnly = FALSE) {
     ggplot2::geom_segment(aes(x=resPos, xend=resPos, y=0, yend=eveScores),
                           color="grey") +
     ggplot2::geom_point(aes(color=eveScores), size=4) +
+    ggplot2::lims(y = c(0, 1)) +
     ggplot2::scale_colour_gradient2(
       low = "steelblue1",
       mid = "gray",
       high = "firebrick1",
-      midpoint = 0.5) +
+      midpoint = 0.5,
+      limits = c(0, 1)) +
     ggplot2::theme_light() +
     ggplot2::theme(
       panel.grid.major.x = element_blank(),
@@ -213,6 +215,7 @@ visualizeVariant2 <- function(eveInfo1, eveInfo2, geneName = "X", aboveZeroOnly 
     ggplot2::geom_segment(data=eveInfo2Copy, aes(x=resPos, xend=resPos, y=0, yend=eveScores),
                           color="grey") +
     ggplot2::geom_point(data=eveInfo2Copy, aes(color="Variant 2"), size=4) +
+    ggplot2::lims(y = c(0, 1)) +
     ggplot2::theme_light() +
     ggplot2::theme(
       panel.grid.major.x = element_blank(),
@@ -222,7 +225,7 @@ visualizeVariant2 <- function(eveInfo1, eveInfo2, geneName = "X", aboveZeroOnly 
     ggplot2::labs(title = paste("EVE scores vs Residue Positions for", geneName, sep = " "),
          x = "Residue Position",
          y = "EVE Score",
-         color = "EVE Score")
+         color = "Variants")
 
   return(p)
 }
