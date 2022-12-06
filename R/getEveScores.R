@@ -1,7 +1,20 @@
-#' Gets the EVE score for the amino acids in variant of interest.
+#' Gets the EVE score for the amino acids in variant of interest
 #'
 #' A function that takes in EVE and variant data then will get the EVE score for
 #' each amino acid in the variant of interest.
+#'
+#' This function annotates the variant data by assigning an EVE score to each
+#' amino acid in the variant of interest.  Prior to using this function use the
+#' 'processVariantData' function to properly process the variant data.
+#'
+#' EVE (Evolutionary model of Variant Effect) is an unsupervised machine
+#' learning model shown to be accurate in predicting pathogenicity of missense
+#' variants.  It uses multiple sequence alignments and doesn't rely on knowledge
+#' of protein function to do so.  More about EVE can be found here
+#' (https://evemodel.org/).
+#'
+#' The EVE score assigned is continuous on the interval zero to one.  An EVE
+#' score of zero indicates benign while an EVE score of one is most pathogenic.
 #'
 #' @param eveData A tibble containing the EVE data that has already been
 #' processed by the processEveData function.
@@ -47,6 +60,21 @@
 #'
 #' eveScores <- getEveScores(EveData, varDataGen, protein = FALSE)
 #' eveScores
+#'
+#' @references
+#' 1. R Core Team (2022). R: A language and environment for statistical
+#' computing. R Foundation for Statistical Computing, Vienna, Austria.
+#' URL https://www.R-project.org/.
+#'
+#' 2. Wickham H, François R, Henry L, Müller K (2022). \emph{dplyr: A Grammar of
+#' Data Manipulation}. R package version 1.0.10,
+#' https://CRAN.R-project.org/package=dplyr.
+#'
+#' 3. Müller K, Wickham H (2022). \emph{tibble: Simple Data Frames}. R package
+#' version 3.1.8, https://CRAN.R-project.org/package=tibble.
+#'
+#' 4. Frazer, J. et al. Disease variant prediction with deep generative models
+#' of evolutionary data. Nature. 599. 91-95 (2021).
 #'
 #' @import dplyr tibble
 #' @importFrom stats setNames

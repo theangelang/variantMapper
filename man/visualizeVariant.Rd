@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualizeVariant.R
 \name{visualizeVariant}
 \alias{visualizeVariant}
-\title{Visualizes EVE score for a protein variant.}
+\title{Visualizes EVE score for a protein variant}
 \usage{
 visualizeVariant(eveInfo, geneName = "X", aboveZeroOnly = FALSE)
 }
@@ -26,9 +26,23 @@ A lollipop graph showing the EVE score at each residue position.
 }
 \description{
 A function that visualizes EVE scores of a variant at residue positions where
-EVE scores are possible.  Function will replace EVE scores of NaN values with 0.
-The colors assigned to EVE scores represent pathogenicity with 1 as most
-pathogenic and 0 as benign.
+EVE scores are possible.  Function will replace EVE scores of NaN values with
+0.  The colors assigned to EVE scores correspond to pathogenicity with 1
+(red) as most pathogenic and 0 (blue) as benign.
+}
+\details{
+Prior to using this function ensure the 'processEveData', 'processVariantData',
+and 'getEveScores' functions have been used in this order to properly process
+and assign EVE scores to the variant of interest.
+
+EVE (Evolutionary model of Variant Effect) is an unsupervised machine
+learning model shown to be accurate in predicting pathogenicity of missense
+variants.  It uses multiple sequence alignments and doesn't rely on knowledge
+of protein function to do so.  More about EVE can be found here
+(https://evemodel.org/).
+
+The EVE score assigned is continuous on the interval zero to one.  An EVE
+score of zero indicates benign while an EVE score of one is most pathogenic.
 }
 \examples{
 # Examples:
@@ -59,4 +73,21 @@ eveScoresGen
 variantPlotGen <- visualizeVariant(eveScoresGen, "NRXN1")
 variantPlotGen
 
+}
+\references{
+1. R Core Team (2022). R: A language and environment for statistical
+computing. R Foundation for Statistical Computing, Vienna, Austria.
+URL https://www.R-project.org/.
+
+2. H. Wickham. ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag
+New York, 2016.
+
+3. Wickham H, François R, Henry L, Müller K (2022). \emph{dplyr: A Grammar of
+Data Manipulation}. R package version 1.0.10,
+https://CRAN.R-project.org/package=dplyr.
+
+4. Holtz, Y. Lollipop plot. https://r-graph-gallery.com/lollipop-plot (2018).
+
+5. Frazer, J. et al. Disease variant prediction with deep generative models
+of evolutionary data. Nature. 599. 91-95 (2021).
 }

@@ -1,9 +1,22 @@
-#' Visualizes EVE score for a protein variant.
+#' Visualizes EVE score for a protein variant
 #'
 #' A function that visualizes EVE scores of a variant at residue positions where
-#' EVE scores are possible.  Function will replace EVE scores of NaN values with 0.
-#' The colors assigned to EVE scores represent pathogenicity with 1 as most
-#' pathogenic and 0 as benign.
+#' EVE scores are possible.  Function will replace EVE scores of NaN values with
+#' 0.  The colors assigned to EVE scores correspond to pathogenicity with 1
+#' (red) as most pathogenic and 0 (blue) as benign.
+#'
+#' Prior to using this function ensure the 'processEveData', 'processVariantData',
+#' and 'getEveScores' functions have been used in this order to properly process
+#' and assign EVE scores to the variant of interest.
+#'
+#' EVE (Evolutionary model of Variant Effect) is an unsupervised machine
+#' learning model shown to be accurate in predicting pathogenicity of missense
+#' variants.  It uses multiple sequence alignments and doesn't rely on knowledge
+#' of protein function to do so.  More about EVE can be found here
+#' (https://evemodel.org/).
+#'
+#' The EVE score assigned is continuous on the interval zero to one.  An EVE
+#' score of zero indicates benign while an EVE score of one is most pathogenic.
 #'
 #' @param eveInfo Tibble with EVE scores for each residue position that has a
 #' score calculated by EVE, residue position, wildtype amino acid, and mutated
@@ -51,6 +64,23 @@
 #'
 #' variantPlotGen <- visualizeVariant(eveScoresGen, "NRXN1")
 #' variantPlotGen
+#'
+#' @references
+#' 1. R Core Team (2022). R: A language and environment for statistical
+#' computing. R Foundation for Statistical Computing, Vienna, Austria.
+#' URL https://www.R-project.org/.
+#'
+#' 2. H. Wickham. ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag
+#' New York, 2016.
+#'
+#' 3. Wickham H, François R, Henry L, Müller K (2022). \emph{dplyr: A Grammar of
+#' Data Manipulation}. R package version 1.0.10,
+#' https://CRAN.R-project.org/package=dplyr.
+#'
+#' 4. Holtz, Y. Lollipop plot. https://r-graph-gallery.com/lollipop-plot (2018).
+#'
+#' 5. Frazer, J. et al. Disease variant prediction with deep generative models
+#' of evolutionary data. Nature. 599. 91-95 (2021).
 #'
 #' @importFrom methods hasArg
 #' @import ggplot2 dplyr
@@ -105,10 +135,26 @@ visualizeVariant <- function(eveInfo, geneName = "X", aboveZeroOnly = FALSE) {
   return(p)
 }
 
-#' Visualize EVE scores of two variants for one gene simultaneously.
+#' Visualize EVE scores of two variants for one gene simultaneously
 #'
 #' A function that visualizes EVE scores for two variants of the same gene
 #' simultaneously.  Function will replace EVE scores of NaN values with 0.
+#'
+#' Prior to using this function ensure the 'processEveData', 'processVariantData',
+#' and 'getEveScores' functions have been used in this order to properly process
+#' and assign EVE scores to the variant of interest.  For each variant ensure
+#' you have used 'processVariantData' and 'getEveScores'.  In total there should
+#' have been one call to 'processEveData', two calls to 'processVariantData'
+#' (one per variant), and two calls to 'getEveScore' (one per variant).
+#'
+#' EVE (Evolutionary model of Variant Effect) is an unsupervised machine
+#' learning model shown to be accurate in predicting pathogenicity of missense
+#' variants.  It uses multiple sequence alignments and doesn't rely on knowledge
+#' of protein function to do so.  More about EVE can be found here
+#' (https://evemodel.org/).
+#'
+#' The EVE score assigned is continuous on the interval zero to one.  An EVE
+#' score of zero indicates benign while an EVE score of one is most pathogenic.
 #'
 #' @param eveInfo1 Tibble for the first variant with EVE scores for each residue
 #' position that has a score calculated by EVE, residue position, wildtype amino
@@ -164,6 +210,23 @@ visualizeVariant <- function(eveInfo, geneName = "X", aboveZeroOnly = FALSE) {
 #' compareVariantsPlotAboveZero <- visualizeVariant2(eveScoresProt,
 #' eveScoresGen, "NRXN1", aboveZeroOnly = TRUE)
 #' compareVariantsPlotAboveZero
+#'
+#' @references
+#' 1. R Core Team (2022). R: A language and environment for statistical
+#' computing. R Foundation for Statistical Computing, Vienna, Austria.
+#' URL https://www.R-project.org/.
+#'
+#' 2. H. Wickham. ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag
+#' New York, 2016.
+#'
+#' 3. Wickham H, François R, Henry L, Müller K (2022). \emph{dplyr: A Grammar of
+#' Data Manipulation}. R package version 1.0.10,
+#' https://CRAN.R-project.org/package=dplyr.
+#'
+#' 4. Holtz, Y. Lollipop plot. https://r-graph-gallery.com/lollipop-plot (2018).
+#'
+#' 5. Frazer, J. et al. Disease variant prediction with deep generative models
+#' of evolutionary data. Nature. 599. 91-95 (2021).
 #'
 #' @importFrom methods hasArg
 #' @import ggplot2 dplyr

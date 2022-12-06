@@ -20,6 +20,20 @@ A tibble with the EVE data from the vcf file provided.
 A function that checks if the data provided is in the right format (vcf) and
 processes it for future use.
 }
+\details{
+This data (vcf file) should come from the EVE website
+(https://evemodel.org/download/protein) under the 'Download' tab.
+On this page enter in the gene of interest and select VCFs.
+
+EVE (Evolutionary model of Variant Effect) is an unsupervised machine
+learning model shown to be accurate in predicting pathogenicity of missense
+variants.  It uses multiple sequence alignments and doesn't rely on knowledge
+of protein function to do so.  More about EVE can be found here
+(https://evemodel.org/).
+
+The EVE score assigned is continuous on the interval zero to one.  An EVE
+score of zero indicates benign while an EVE score of one is most pathogenic.
+}
 \examples{
 # Example:
 # Get the EVE data in the correct format by accessing raw EVE data provided
@@ -29,4 +43,23 @@ EvePath <- system.file("extdata", "NRX1B_HUMAN_SUBSET.vcf", package = "variantMa
 EveData <- processEveData(EvePath)
 EveData
 
+}
+\references{
+1. R Core Team (2022). R: A language and environment for statistical computing.
+R Foundation for Statistical Computing, Vienna, Austria.
+URL https://www.R-project.org/.
+
+2. Knaus BJ, Grünwald NJ (2017). “VCFR: a package to manipulate and visualize
+variant call format data in R.” \emph{Molecular Ecology Resources, 17}(1),
+44-53. ISSN 757, http://dx.doi.org/10.1111/1755-0998.12549.
+
+3. Müller K, Wickham H (2022). \emph{tibble: Simple Data Frames}. R package
+version 3.1.8, https://CRAN.R-project.org/package=tibble.
+
+4. Wickham H (2022). \emph{stringr: Simple, Consistent Wrappers for Common
+String Operations}. R package version 1.4.1,
+<https://CRAN.R-project.org/package=stringr>.
+
+5. Frazer, J. et al. Disease variant prediction with deep generative models
+of evolutionary data. Nature. 599. 91-95 (2021).
 }
