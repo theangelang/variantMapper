@@ -11,15 +11,13 @@ ui <- fluidPage(
   helpText("For information about this Shiny app and how to use it, please see
            the About/Help tab."),
 
-  # TODO: Add description about EVE and overall app
-
   # Sidebar layout with input and output definitions ----
   sidebarLayout(
 
     # Sidebar panel for inputs ----
     sidebarPanel(
 
-      # Input: Select a file ----
+      # Input: Select a vcf file for EVE data ----
       fileInput("eveData", "EVE Data",
                 multiple = FALSE,
                 accept = ".vcf"),
@@ -32,6 +30,7 @@ ui <- fluidPage(
       tags$p("For example data please see the About/Help tab for more
              information."),
 
+      # Input: Enter gene name ----
       textInput("geneName", "Gene name", placeholder = "Name of gene"),
 
       tags$p("Enter in the name of the gene of interest."),
@@ -39,7 +38,7 @@ ui <- fluidPage(
       # Horizontal line ----
       tags$hr(),
 
-      # Input: Select a file ----
+      # Input: Select a csv file for variant 1----
       fileInput("variant1", "Variant 1 data",
                 multiple = FALSE,
                 accept = ".csv"),
@@ -66,7 +65,7 @@ ui <- fluidPage(
       # Horizontal line ----
       tags$hr(),
 
-      # Input: Select a file ----
+      # Input: Select a csv file for variant 2----
       fileInput("variant2", "Variant 2 data (optional)",
                 multiple = FALSE,
                 accept = ".csv"),
@@ -90,20 +89,16 @@ ui <- fluidPage(
       information about file format and how to determine which type of file you
       have."),
 
-      actionButton(inputId = "runCalculations",
-                   label = "Run")
     ),
 
 
     # Main panel for displaying outputs ----
     mainPanel(
 
-      # add filter to non-zero only
-      # add average eve score
-
-      # Output: Tabset w/ variant 1 plot, variant 2 plot, and two variants
-      # overlapped ----
+      # Output: Tabset w/ about/help section, variant 1 information, variant 2
+      # information, and information for two variants simultaneously ----
       tabsetPanel(type = "tabs",
+                  # About/Help tab ----
                   tabPanel("About/Help",
                            tags$h3("Welcome to variantMapper's Shiny app!"),
                            tags$p("This Shiny app aims to make variant
@@ -139,7 +134,6 @@ ui <- fluidPage(
                                   visualizations of both variants
                                   ssimultaneously."),
                            tags$h3("Instructions"),
-
                            tags$blockquote("Note, you do not have to upload two
                                            sets of variant data in order to use
                                            this Shiny app.  The minimum required
@@ -211,6 +205,7 @@ ui <- fluidPage(
                                   https://github.com/theangelang/variantMapper/
                                   tree/master/inst/extdata")
                            ),
+                  # Variant 1 tab ----
                   tabPanel("Variant 1",
                            uiOutput("variant1PlotTitle"),
                            plotOutput("variantPlot1"),
@@ -221,6 +216,7 @@ ui <- fluidPage(
                            uiOutput("variant1TableDesc"),
                            tableOutput("variant1Data")
                            ),
+                  # Variant 2 tab ----
                   tabPanel("Variant 2",
                            uiOutput("variant2PlotTitle"),
                            plotOutput("variantPlot2"),
@@ -231,6 +227,7 @@ ui <- fluidPage(
                            uiOutput("variant2TableDesc"),
                            tableOutput("variant2Data")
                           ),
+                  # Variant 1 and 2 displayed simultaneously tab ----
                   tabPanel("Overlapped",
                            uiOutput("variantMultiPlotTitle"),
                            plotOutput("variantPlotMulti"),
@@ -254,8 +251,6 @@ ui <- fluidPage(
   )
 )
 
-
-# TODO: Add reactive and logic for using button
 # Define server logic
 server <- function(input, output, session) {
 
@@ -273,16 +268,16 @@ server <- function(input, output, session) {
     scoredVariant1 <- getEveScores(eveDataProcessed, variant1Processed,
                                    as.logical(input$form1))
     scoredVariant1
-    # firstRes <- min(scoredVariant1[, "resPos"])
-    # lastRes <- max(scoredVariant1[, "resPos"])
   })
 
   slider1Calculation <- reactive({
-    # req(input$runCalculations)
-    variant1Data <- variant1Calculation()
-    firstRes <- min(variant1Data[, "resPos"])
-    lastRes <- max(variant1Data[, "resPos"])
-    c(firstRes, lastRes)
+    if (! is.null(variant1Calculation)) {
+      # req(input$runCalculations)
+      variant1Data <- variant1Calculation()
+      firstRes <- min(variant1Data[, "resPos"])
+      lastRes <- max(variant1Data[, "resPos"])
+      c(firstRes, lastRes)
+    }
   })
 
   output$sliderValues1 <- renderUI({
@@ -290,12 +285,14 @@ server <- function(input, output, session) {
     # firstRes <- min(variant1Data[, "resPos"])
     # lastRes <- max(variant1Data[, "resPos"])
     # req(input$runCalculations)
-    slider1Values <- slider1Calculation()
-    print(slider1Values)
-    sliderInput("numRes1",
-                "Protein residue range",
-                value = c(slider1Values[[1]], slider1Values[[2]]),
-                min = slider1Values[[1]], max = slider1Values[[2]])
+    if (! is.null(slider1Calculation)) {
+      slider1Values <- slider1Calculation()
+      print(slider1Values)
+      sliderInput("numRes1",
+                  "Protein residue range",
+                  value = c(slider1Values[[1]], slider1Values[[2]]),
+                  min = slider1Values[[1]], max = slider1Values[[2]])
+      }
     })
 
   variant1Filtering <- reactive({
@@ -318,9 +315,11 @@ server <- function(input, output, session) {
 
   output$variantPlot1 <- renderPlot({
     # req(input$runCalculations)
-    variant1Data <- variant1Calculation()
-    filteredVariant1Data <- variant1Filtering()
-    visualizeVariant(filteredVariant1Data, input$geneName)
+    if ((! is.null(variant1Calculation())) & (! is.null(variant1Filtering))) {
+      variant1Data <- variant1Calculation()
+      filteredVariant1Data <- variant1Filtering()
+      visualizeVariant(filteredVariant1Data, input$geneName)
+    }
   })
 
   output$averageScore1Title <- renderUI({
@@ -356,7 +355,17 @@ server <- function(input, output, session) {
 
   output$variant1TableDesc <- renderUI({
     if ((! is.null(variant1Calculation())) & (! is.null(variant1Filtering))){
-      p("The columns...")
+      tagList(
+        tags$p("Below is a description of column titles:"),
+        tags$ul(
+          tags$li("eveScores: The EVE score of the amino acid at this residue
+                  position in the variant."),
+          tags$li("resPos: The residue position."),
+          tags$li("wtAa: The wildtype amino acid at this residue position."),
+          tags$li("varPos: The variant amino acid at this residue position in
+                  the protein variant.")
+        )
+      )
     }
   })
 
@@ -465,8 +474,18 @@ server <- function(input, output, session) {
   })
 
   output$variant2TableDesc <- renderUI({
-    if ((! is.null(variant1Calculation())) & (! is.null(variant1Filtering))){
-      p("The columns...")
+    if ((! is.null(variant2Calculation())) & (! is.null(variant2Filtering))){
+      tagList(
+        tags$p("Below is a description of column titles:"),
+        tags$ul(
+          tags$li("eveScores: The EVE score of the amino acid at this residue
+                  position in the variant."),
+          tags$li("resPos: The residue position."),
+          tags$li("wtAa: The wildtype amino acid at this residue position."),
+          tags$li("varPos: The variant amino acid at this residue position in
+                  the protein variant.")
+        )
+      )
     }
   })
 
