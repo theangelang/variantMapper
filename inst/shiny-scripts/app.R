@@ -106,15 +106,22 @@ ui <- fluidPage(
                                   Evolutionary model of Variant Effect (EVE)
                                   more accessible allowing for one source of
                                   variant pathogenicity predictions to be easily
-                                  accessed. EVE is an unsupervised machine
+                                  accessed.  Moreover, this Shiny app allows for
+                                  visualization of variants and their EVE
+                                  scores."),
+                          tags$h4("About EVE"),
+                          tags$p("EVE is an unsupervised machine
                                   learning model shown to be accurate in its
                                   predictions and doesn’t rely on knowledge of
                                   protein function. It uses multiple sequence
                                   alignments to predict pathogenicity of
-                                  missense variants. You can find out more about
-                                  EVE here (https://evemodel.org/).
-                                  With this Shiny app you will be able to
-                                  asign an EVE score to your variants of
+                                  missense variants. An EVE score is assigned to
+                                  missense variants from a continuous interval
+                                  of 0 to 1 with 0 being benign and 1 being most
+                                  pathogenic.  You can find out more about
+                                  EVE here (https://evemodel.org/)."),
+                          tags$p("With this Shiny app you will be able to
+                                  assign an EVE score to your variants of
                                   interest and visualize their EVE scores by
                                   residue position.  You can also compare two
                                   variants of the same gene simultaneously on
@@ -136,15 +143,27 @@ ui <- fluidPage(
                            tags$h3("Instructions"),
                            tags$blockquote("Note, you do not have to upload two
                                            sets of variant data in order to use
-                                           this Shiny app.  The minimum required
-                                           fields to use this Shiny app are
-                                           'EVE Data', 'Gene name', 'Variant 1
-                                           data', and 'Form of variant 1's
-                                           data'.  The second variant option
-                                           enables you to look at the EVE scores
-                                           for two variants separately and
-                                           overlapped onto the gene at one time.
-                                           "),
+                                           this Shiny app.  The minimum is
+                                           filling out the 'EVE Data', 'Gene
+                                           name' and inputting the information
+                                           for one variant.  The variant
+                                           information will show up on the
+                                           tab corresponding to the input
+                                           location.  More specifically,
+                                           the minimum required fields to use
+                                           this Shiny app are either:"),
+                          tags$ul(
+                            tags$li("'EVE Data', 'Gene name', 'Variant 1
+                                    data', and 'Form of variant 1's data'"),
+                            tags$li("'EVE Data', 'Gene name', 'Variant 2
+                                             data', and 'Form of variant 2's
+                                             data'")
+                          ),
+                          tags$blockquote("Inputing variant information for two
+                                          variants enables you to look at the
+                                          EVE scores for two variants separately
+                                          and overlapped onto the gene at one
+                                          time."),
                            tags$h4("To use this Shiny app to analyze one
                                    variant:"),
                            tags$ol(
@@ -258,7 +277,6 @@ server <- function(input, output, session) {
     req(input$variant1)
     req(input$form1)
     req(input$geneName)
-    # req(input$runCalculations)
     eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
     variant1Processed <- processVariantData(filePath = input$variant1$datapath,
                                             as.logical(input$form1))
@@ -269,7 +287,6 @@ server <- function(input, output, session) {
 
   slider1Calculation <- reactive({
     if (! is.null(variant1Calculation)) {
-      # req(input$runCalculations)
       variant1Data <- variant1Calculation()
       firstRes <- min(variant1Data[, "resPos"])
       lastRes <- max(variant1Data[, "resPos"])
@@ -278,10 +295,6 @@ server <- function(input, output, session) {
   })
 
   output$sliderValues1 <- renderUI({
-    # variant1Data <- variant1Calculation()
-    # firstRes <- min(variant1Data[, "resPos"])
-    # lastRes <- max(variant1Data[, "resPos"])
-    # req(input$runCalculations)
     if (! is.null(slider1Calculation)) {
       slider1Values <- slider1Calculation()
       sliderInput("numRes1",
@@ -292,7 +305,6 @@ server <- function(input, output, session) {
     })
 
   variant1Filtering <- reactive({
-    # req(input$runCalculations)
     req(input$numRes1)
     scoredVariant1 <- variant1Calculation()
     filteredScoredVariant1 <- dplyr::filter(scoredVariant1,
@@ -310,7 +322,6 @@ server <- function(input, output, session) {
   })
 
   output$variantPlot1 <- renderPlot({
-    # req(input$runCalculations)
     if ((! is.null(variant1Calculation())) & (! is.null(variant1Filtering))) {
       variant1Data <- variant1Calculation()
       filteredVariant1Data <- variant1Filtering()
@@ -370,7 +381,6 @@ server <- function(input, output, session) {
     req(input$variant2)
     req(input$form2)
     req(input$geneName)
-    # req(input$runCalculations)
     eveDataProcessed <- processEveData(filePath = input$eveData$datapath)
     variant2Processed <- processVariantData(filePath = input$variant2$datapath,
                                             as.logical(input$form2))
@@ -378,12 +388,9 @@ server <- function(input, output, session) {
                                    variant2Processed,
                                    as.logical(input$form2))
     scoredVariant2
-    # firstRes <- min(scoredVariant1[, "resPos"])
-    # lastRes <- max(scoredVariant1[, "resPos"])
   })
 
   slider2Calculation <- reactive({
-    # req(input$runCalculations)
     variant2Data <- variant2Calculation()
     firstRes <- min(variant2Data[, "resPos"])
     lastRes <- max(variant2Data[, "resPos"])
@@ -391,7 +398,6 @@ server <- function(input, output, session) {
   })
 
   output$sliderValues2 <- renderUI({
-    # req(input$runCalculations)
     slider2Values <- slider2Calculation()
     sliderInput("numRes2",
                 "Protein residue range",
@@ -400,7 +406,6 @@ server <- function(input, output, session) {
   })
 
   variant2Filtering <- reactive({
-    # req(input$runCalculations)
     req(input$numRes2)
     scoredVariant2 <- variant2Calculation()
     filteredScoredVariant2 <- dplyr::filter(scoredVariant2,
@@ -408,7 +413,6 @@ server <- function(input, output, session) {
                                               resPos <= input$numRes2[2])
   })
 
-  # maybe don't need
   output$variant2PlotTitle <- renderUI({
     if ((! is.null(variant2Calculation())) & (! is.null(variant2Filtering))){
       header <- paste("Plot of EVE score vs residue position for",
@@ -419,7 +423,6 @@ server <- function(input, output, session) {
   })
 
   output$variantPlot2 <- renderPlot({
-    # req(input$runCalculations)
     variant2Data <- variant2Calculation()
     filteredVariant2Data <- variant2Filtering()
     visualizeVariant(filteredVariant2Data, input$geneName)
@@ -472,19 +475,7 @@ server <- function(input, output, session) {
 
   #----------- For the overlap tab
 
-  # sliderMultiCalculation <- reactive({
-  #   # req(input$runCalculations)
-  #   variant2Data <- variant2Calculation()
-  #   firstRes <- min(variant2Data[, "resPos"])
-  #   lastRes <- max(variant2Data[, "resPos"])
-  #   return(c(firstRes, lastRes))
-  # })
-
   output$sliderValuesMulti <- renderUI({
-    # variant1Data <- variant1Calculation()
-    # firstRes <- min(variant1Data[, "resPos"])
-    # lastRes <- max(variant1Data[, "resPos"])
-    # req(input$runCalculations)
     # use values from variant 2 since need both variants for this page
 
     if ((! is.null(variant1Calculation())) & (! is.null(variant1FilteringMulti)) &
@@ -498,7 +489,6 @@ server <- function(input, output, session) {
   })
 
   variant1FilteringMulti <- reactive({
-    # req(input$runCalculations)
     req(input$numResMulti)
     scoredVariant1 <- variant1Calculation()
     filteredScoredVariant1Multi <- dplyr::filter(scoredVariant1,
@@ -507,7 +497,6 @@ server <- function(input, output, session) {
   })
 
   variant2FilteringMulti <- reactive({
-    # req(input$runCalculations)
     req(input$numResMulti)
     scoredVariant2 <- variant2Calculation()
     filteredScoredVariant2Multi <- dplyr::filter(scoredVariant2,
@@ -515,7 +504,6 @@ server <- function(input, output, session) {
                                               resPos <= input$numResMulti[2])
   })
 
-  # maybe don't need
   output$variantMultiPlotTitle <- renderUI({
     if ((! is.null(variant1Calculation())) & (! is.null(variant1FilteringMulti)) &
         (! is.null(variant2Calculation())) & (! is.null(variant2FilteringMulti))){

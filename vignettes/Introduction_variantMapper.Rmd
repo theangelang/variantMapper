@@ -115,7 +115,7 @@ compareVariantsPlotNonZero
 If you prefer to use variantMapper's functionalities in a web interface you may run the Shiny app.  Functionality in the Shiny app include annotating variants of interest, getting the average EVE score for a variant, and plotting variants.
 
 ```{r, eval = FALSE}
-# runVariantMapper()
+runVariantMapper()
 ```
 
 Session Info:
