@@ -83,12 +83,8 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
 
   # check if eveData has correct columns
   eveDataCols <- colnames(eveData)
-  expectedEveCols <- c("CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER",
-                       "Key", "EVE", "EnsTranscript", "RevStr", "ProtMut",
-                       "Class10", "Class20", "Class25", "Class30", "Class40",
-                       "Class50", "Class60", "Class70", "Class75", "Class80",
-                       "Class90", "wtAa", "resPos", "varAa")
-  if (!dplyr::setequal(eveDataCols, expectedEveCols)) {
+
+  if(isFALSE(checkInputData(eveDataCols, "EVE"))) {
     stop("eveData does not have expected columns.  Ensure you used
          processEveData to format the EVE vcf file first.")
   }
@@ -97,12 +93,12 @@ getEveScores <- function(eveData, variantData, protein = TRUE) {
   variantDataCols <- colnames(variantData)
 
   if (isTRUE(protein)) {
-    expectedVarCols <- c("wtAa", "resPos", "varAa")
+    dataType <- "protein"
   } else {
-    expectedVarCols <- c("CHROM", "start", "end", "REF", "ALT")
+    dataType <- "genomic"
   }
 
-  if (!dplyr::setequal(variantDataCols, expectedVarCols)) {
+  if (isFALSE(checkInputData(variantDataCols, dataType))) {
     stop("variantData does not have expected columns.  Ensure the protein
       argument is filled out properly depending on the data type and that you
       used processVariantData to format the variant data first.")
@@ -253,6 +249,45 @@ eveScores <- NULL
 resPos <- NULL
 varAa <- NULL
 wtAa <- NULL
+
+#' Helper function to check if the data is in the correct format for further
+#' analysis.
+#'
+#' @param inputData A character vector with the column names of the input data.
+#'
+#' @param dataType A character vector indicating if it is EVE, protein, or
+#' genomic data
+#'
+#' @return A logical value indicating whether the input data has the expected
+#' column names for the input data type.
+#'
+#' @noRd
+
+checkInputData <- function(inputData, dataType) {
+  # check input dataType first
+  if ((dataType != "EVE") & (dataType != "protein") & (dataType != "genomic")) {
+    stop("The check for this dataType isn't supported.  This can only check for
+         'EVE', 'protein', or 'genomic'.")
+  }
+
+  result <- TRUE
+  expectedEveCols <- c("CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER",
+                       "Key", "EVE", "EnsTranscript", "RevStr", "ProtMut",
+                       "Class10", "Class20", "Class25", "Class30", "Class40",
+                       "Class50", "Class60", "Class70", "Class75", "Class80",
+                       "Class90", "wtAa", "resPos", "varAa")
+  expectedProtVarCols <- c("wtAa", "resPos", "varAa")
+  expectedGenVarCols <- c("CHROM", "start", "end", "REF", "ALT")
+
+  if ((dataType == "EVE") & (!dplyr::setequal(inputData, expectedEveCols))) {
+    result <- FALSE
+  } else if ((dataType == "protein") & (!dplyr::setequal(inputData, expectedProtVarCols))) {
+    result <- FALSE
+  } else if ((dataType == "genomic") & (!dplyr::setequal(inputData, expectedGenVarCols))) {
+    result <- FALSE
+  }
+  return(result)
+}
 
 #' Helper function to get unique wild type amino acids at each residue
 #' position.

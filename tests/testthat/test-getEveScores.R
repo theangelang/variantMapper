@@ -47,6 +47,35 @@ test_that("Results have expected columns", {
   expect_equal(colnames(getEveScores(eveData, varDataGen, protein = FALSE)), columns)
 })
 
+test_that("Helper function checkInputData results are of expected type", {
+  EvePath <- system.file("extdata", "NRX1B_HUMAN_SUBSET.vcf", package = "variantMapper")
+  processedEveData <- processEveData(EvePath)
+
+  varDataProtPath <- system.file("extdata", "variant_data_protein.csv", package = "variantMapper")
+  varDataProt <- processVariantData(varDataProtPath, protein = TRUE)
+
+  varDataGenPath <- system.file("extdata", "variant_data_genomic.csv", package = "variantMapper")
+  varDataGen <- processVariantData(varDataGenPath, protein = FALSE)
+
+  trueResultEve <- checkInputData(colnames(processedEveData), "EVE")
+  trueResultVarProt <- checkInputData(colnames(varDataProt), "protein")
+  trueResultVarGen <- checkInputData(colnames(varDataGen), "genomic")
+
+  falseResultEve <- checkInputData(colnames(processedEveData), "protein")
+  falseResultVarProt <- checkInputData(colnames(varDataProt), "genomic")
+  falseResultVarGen <- checkInputData(colnames(varDataGen), "EVE")
+
+  expect_true(trueResultEve)
+  expect_true(trueResultVarProt)
+  expect_true(trueResultVarGen)
+
+  expect_false(falseResultEve)
+  expect_false(falseResultVarProt)
+  expect_false(falseResultVarGen)
+
+  expect_error(checkInputData(colnames(processedEveData), "other"))
+})
+
 test_that("Helper function uniqueWtAa results are of expected length and columns", {
   EvePath <- system.file("extdata", "NRX1B_HUMAN_SUBSET.vcf", package = "variantMapper")
   processedEveData <- processEveData(EvePath)
