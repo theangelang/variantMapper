@@ -292,16 +292,18 @@ uniqueWtAaPos <- function(eveData) {
 #' @noRd
 
 findVariantPosition <- function(coordinates, varCoord) {
+  result <- c()
   if (varCoord %in% coordinates) {
-    return(c(ntPos = 1, genomicCoord = varCoord))
+    result <- c(ntPos = 1, genomicCoord = varCoord)
   } else if ((varCoord - 1) %in% coordinates) {
-    return(c(ntPos = 2, genomicCoord = varCoord - 1))
+    result <- c(ntPos = 2, genomicCoord = varCoord - 1)
   } else if ((varCoord - 2) %in% coordinates) {
-    return(c(ntPos = 3, genomicCoord = varCoord - 2))
+    result <- c(ntPos = 3, genomicCoord = varCoord - 2)
   } else {
     # the genomic coordiante is not scored
-    return(c(ntPos = NaN, genomicCoord = NaN))
+    result <- c(ntPos = NaN, genomicCoord = NaN)
   }
+  return(result)
 }
 
 #' Helper function to construct the alternate codon sequence corresponding to
