@@ -38,8 +38,8 @@ https://github.com/theangelang/variantMapper/tree/master/inst/extdata
 
 If the single nucleotide variant data is in genomic form it should be a csv
 file with five columns.  The first being 'chrom' which are either integers or
-X or Y representing chromosome location.  The second being 'start' which has
-integers indicating start position of the SNV.  The third is 'end',
+'X' or 'Y' representing chromosome location.  The second being 'start' which
+has integers indicating start position of the SNV.  The third is 'end',
 containing integers representing the end position of the SNV.  The fourth
 column is 'ref_allele' which has characters representing the wildtype
 nucleotide.  The fifth column is 'alt_allele' which has characters

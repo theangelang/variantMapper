@@ -139,7 +139,7 @@ ui <- fluidPage(
                            tags$h4("Overlapped tab"),
                            tags$p("The Overlapped panel shows analysis and
                                   visualizations of both variants
-                                  ssimultaneously."),
+                                  simultaneously."),
                            tags$h3("Instructions"),
                            tags$blockquote("Note, you do not have to upload two
                                            sets of variant data in order to use
@@ -206,23 +206,23 @@ ui <- fluidPage(
                            is the amino acid variant at this particular residue
                            position.  It also contains the one letter amino acid
                            code.  For an example please see
-                           'variant_data_protein.csv' at https://github.com
-                           /theangelang/variantMapper/tree/master/inst/extdata"
+                           'variant_data_protein.csv' at (https://github.com/
+                           theangelang/variantMapper/tree/master/inst/extdata)."
                                   ),
                            tags$h4("Genomic form"),
                            tags$p("Genomic form is a csv file with five columns.
                            The first being 'chrom' which are either integers or
-                           X or Y representing chromosome location.  The second
-                           being 'start' which has integers indicating start
-                           position of the SNV.  The third is 'end', containing
-                           integers representing the end position of the SNV.
-                           The fourth column is 'ref_allele' which has
+                           'X' or 'Y' representing chromosome location.  The
+                           second being 'start' which has integers indicating
+                           start position of the SNV.  The third is 'end',
+                           containing integers representing the end position of
+                           the SNV.  The fourth column is 'ref_allele' which has
                            characters representing the wildtype nucleotide.
                            The fifth column is 'alt_allele' which has characters
                            representing the variant nucleotide.  For an example
                            please see 'variant_data_genomic.csv' at
-                                  https://github.com/theangelang/variantMapper/
-                                  tree/master/inst/extdata")
+                                  (https://github.com/theangelang/variantMapper/
+                                  tree/master/inst/extdata).")
                            ),
                   # Variant 1 tab ----
                   tabPanel("Variant 1",

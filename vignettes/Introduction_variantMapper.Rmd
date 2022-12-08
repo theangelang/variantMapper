@@ -19,7 +19,7 @@ Evolutionary model of Variant Effect (EVE) is an unsupervised machine learning m
 
 ### variantMapper Overview
 
-variantMapper is an R package designed to make it easier to annotate variants with an EVE score.  This EVE score represents the predicted pathogenicity of a missense mutation at that sepcific position determined by the unsupervised learning model, EVE.  Scores are from a continuous interval of zero to one with zero being benign and one being most pathogenic.  However, if one wants to use EVE's data as a source of validation of pathogenicity with other evidence or use it to filter which variants or locations of a gene to focus on they are not able to easily do so.  It requires manually downlaoding the file and finding the appropriate score if it exists.
+variantMapper is an R package designed to make it easier to annotate variants with an EVE score.  This EVE score represents the predicted pathogenicity of a missense mutation at that specific position determined by the unsupervised learning model, EVE.  Scores are from a continuous interval of zero to one with zero being benign and one being most pathogenic.  However, if one wants to use EVE's data as a source of validation of pathogenicity with other evidence or use it to filter which variants or locations of a gene to focus on they are not able to easily do so.  It requires manually downloading the file and finding the appropriate score if it exists.
 
 variantMapper makes this process easier and more efficient by annotating the variants of interest with an EVE score.  Additionally, it is able to provide a weighted average EVE score for a variant of a gene, representing on average the pathogenicity of residues scored while taking into account different regions of a gene that are more important for gene function.  variantMapper also provides the ability to visually map variants to a gene and compare two variants of a single gene at once.
 
@@ -30,7 +30,9 @@ library("variantMapper")
 ```
 
 ## Getting Started
-First, lets download some EVE data from the [EVE website](https://evemodel.org/) for a gene we will study.  We will look at NRXN1 and download the vcf format of the data.
+First, lets download some EVE data from the [EVE website](https://evemodel.org/) for a gene we will study.  We will look at NRXN1 and download the vcf format of the data.  This can be done by navigating to the 'Download' page for single protein data, entering in NRXN1, selecting 'VCFs' at the bottom, and clicking 'Download Protein Data'.  
+
+For an example of what this data looks like you can navigate to (https://github.com/theangelang/variantMapper/tree/master/inst/extdata) and look at NRX1B_HUMAN_SUBSET.vcf, note this is a subset so some rows are missing from the full dataset.
 
 Next, we will need to process this data:
 ```{r, warning=FALSE}
@@ -40,6 +42,12 @@ head(EveData)
 ```
 
 We can now process the variant data.  This can be in either protein or genomic form.  Protein form will have the residue position, wildtype amino acid, and mutant amino acid.  Genomic form will have the chromosome number, start genomic coordinate, end genomic coordinate, reference nucleotide, and alternate nucleotide.  For the purpose of this tutorial we will look at variants of NRXN1 found in two different samples at once, but the user can look at just one at a time.
+
+For sample variant data in both protein form and genomic form you can go to 
+(https://github.com/theangelang/variantMapper/tree/master/inst/extdata) and look
+at variant_data_protein.csv and variant_data_genomic.csv respectively.
+
+Note the file should be in csv format.
 
 ```{r, warning=FALSE}
 # If the data is in protein form.

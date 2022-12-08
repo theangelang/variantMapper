@@ -5,7 +5,8 @@
 #'
 #' This function annotates the variant data by assigning an EVE score to each
 #' amino acid in the variant of interest.  Prior to using this function use the
-#' 'processVariantData' function to properly process the variant data.
+#' 'processEveData' function and the 'processVariantData' function to properly
+#' process the EVE and variant data respectively.
 #'
 #' EVE (Evolutionary model of Variant Effect) is an unsupervised machine
 #' learning model shown to be accurate in predicting pathogenicity of missense
