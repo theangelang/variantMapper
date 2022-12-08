@@ -11,22 +11,27 @@
 The goal of variantMapper is to make variant pathogenicity predictions
 from the Evolutionary model of Variant Effect (EVE) more accessible
 allowing for one source of variant pathogenicity predictions to be
-easily accessed. EVE is an unsupervised machine learning model shown to
-be accurate in its predictions and doesn’t rely on knowledge of protein
-function. It uses multiple sequence alignments to predict pathogenicity
-of missense variants. However, there are challenges with using EVE’s
-data. If one wants to assign predicted pathogenicity scores (EVE scores)
-from EVE they must download the EVE data for that gene and manually find
-the mutations corresponding to their variants. This is especially
-challenging for single nucleotide variants (SNVs). variantMapper makes
-this process efficient and provides a visualization aspect to map
-variants to a gene. By making it easier to get a source of pathogenicity
-predictions for variants this can guide downstream analyses on which
-variants and regions of a gene to focus on saving both time and efforts.
-Additionally, it can serve as one form of validation for related
-studies. Currently, there are no tools to make the process of using data
-generated from EVE easy and efficient to use. Moreover, EVE does not
-provide a visualization aspect for examining specific variants.
+easily accessed.
+
+EVE is an unsupervised machine learning model shown to be accurate in
+its predictions and doesn’t rely on knowledge of protein function. It
+uses multiple sequence alignments to predict pathogenicity of missense
+variants. However, there are challenges with using EVE’s data. If one
+wants to assign predicted pathogenicity scores (EVE scores) from EVE
+they must download the EVE data for that gene and manually find the
+mutations corresponding to their variants. This is especially
+challenging for single nucleotide variants (SNVs). More about EVE can be
+found at the [EVE website](https://evemodel.org/).
+
+variantMapper makes this process efficient and provides a visualization
+aspect to map variants to a gene. By making it easier to get a source of
+pathogenicity predictions for variants this can guide downstream
+analyses on which variants and regions of a gene to focus on saving both
+time and efforts. Additionally, it can serve as one form of validation
+for related studies. Currently, there are no tools to make the process
+of using data generated from EVE easy and efficient to use. Moreover,
+EVE does not provide a visualization aspect for examining specific
+variants.
 
 ``` r
 R version 4.2.1 (2022-06-23)
@@ -188,11 +193,11 @@ functions.
     Resources*, *17*(1), 44-53. ISSN 757,
     <http://dx.doi.org/10.1111/1755-0998.12549>.
 
-8.  Frazer, J. et al. Disease variant prediction with deep generative
-    models of evolutionary data. Nature. 599. 91-95 (2021).
+8.  Frazer, J. et al. (2021). Disease variant prediction with deep
+    generative models of evolutionary data. *Nature*. *599*. 91-95.
 
-9.  Holtz, Y. Lollipop plot. <https://r-graph-gallery.com/lollipop-plot>
-    (2018).
+9.  Holtz, Y. Lollipop plot. (2018)
+    <https://r-graph-gallery.com/lollipop-plot>.
 
 10. Chang W, Cheng J, Allaire J, Sievert C, Schloerke B, Xie Y, Allen J,
     McPherson J, Dipert A, Borges B (2022). *shiny: Web Application
@@ -200,13 +205,13 @@ functions.
     <https://CRAN.R-project.org/package=shiny>.
 
 11. *File Upload*. (2022). RStudio Shiny Gallery,
-    <https://shiny.rstudio.com/gallery/file-upload.html>
+    <https://shiny.rstudio.com/gallery/file-upload.html>.
 
 12. *Tabsets*. (2022). RStudio Shiny Gallery,
-    <https://shiny.rstudio.com/gallery/tabsets.html>
+    <https://shiny.rstudio.com/gallery/tabsets.html>.
 
 13. *Function reference*. (2022). RStudio Shiny,
-    <https://shiny.rstudio.com/reference/shiny/1.7.3/>
+    <https://shiny.rstudio.com/reference/shiny/1.7.3/>.
 
 ## Acknowledgements
 
