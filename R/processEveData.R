@@ -51,8 +51,8 @@
 #' String Operations}. R package version 1.4.1,
 #' <https://CRAN.R-project.org/package=stringr>.
 #'
-#' 5. Frazer, J. et al. Disease variant prediction with deep generative models
-#' of evolutionary data. Nature. 599. 91-95 (2021).
+#' 5. Frazer, J. et al. (2021). Disease variant prediction with deep generative
+#' models of evolutionary data. \emph{Nature. 599}. 91-95.
 #'
 #' @import vcfR dplyr tibble stringr
 

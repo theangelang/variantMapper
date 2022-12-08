@@ -77,10 +77,10 @@
 #' Data Manipulation}. R package version 1.0.10,
 #' https://CRAN.R-project.org/package=dplyr.
 #'
-#' 4. Holtz, Y. Lollipop plot. https://r-graph-gallery.com/lollipop-plot (2018).
+#' 4. Holtz, Y. Lollipop plot. (2018) https://r-graph-gallery.com/lollipop-plot.
 #'
-#' 5. Frazer, J. et al. Disease variant prediction with deep generative models
-#' of evolutionary data. Nature. 599. 91-95 (2021).
+#' 5. Frazer, J. et al. (2021). Disease variant prediction with deep generative
+#' models of evolutionary data. \emph{Nature. 599}. 91-95.
 #'
 #' @importFrom methods hasArg
 #' @import ggplot2 dplyr
@@ -223,10 +223,10 @@ visualizeVariant <- function(eveInfo, geneName = "X", aboveZeroOnly = FALSE) {
 #' Data Manipulation}. R package version 1.0.10,
 #' https://CRAN.R-project.org/package=dplyr.
 #'
-#' 4. Holtz, Y. Lollipop plot. https://r-graph-gallery.com/lollipop-plot (2018).
+#' 4. Holtz, Y. Lollipop plot. (2018) https://r-graph-gallery.com/lollipop-plot.
 #'
-#' 5. Frazer, J. et al. Disease variant prediction with deep generative models
-#' of evolutionary data. Nature. 599. 91-95 (2021).
+#' 5. Frazer, J. et al. (2021). Disease variant prediction with deep generative
+#' models of evolutionary data. \emph{Nature. 599}. 91-95.
 #'
 #' @importFrom methods hasArg
 #' @import ggplot2 dplyr

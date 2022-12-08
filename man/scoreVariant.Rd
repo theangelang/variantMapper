@@ -77,6 +77,6 @@ weightedAvgEveScore
 computing. R Foundation for Statistical Computing, Vienna, Austria.
 URL https://www.R-project.org/.
 
-2. Frazer, J. et al. Disease variant prediction with deep generative models
-of evolutionary data. Nature. 599. 91-95 (2021).
+2. Frazer, J. et al. (2021). Disease variant prediction with deep generative
+models of evolutionary data. \emph{Nature. 599}. 91-95.
 }

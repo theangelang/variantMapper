@@ -82,6 +82,6 @@ https://CRAN.R-project.org/package=dplyr.
 3. Müller K, Wickham H (2022). \emph{tibble: Simple Data Frames}. R package
 version 3.1.8, https://CRAN.R-project.org/package=tibble.
 
-4. Frazer, J. et al. Disease variant prediction with deep generative models
-of evolutionary data. Nature. 599. 91-95 (2021).
+4. Frazer, J. et al. (2021). Disease variant prediction with deep generative
+models of evolutionary data. \emph{Nature. 599}. 91-95.
 }
